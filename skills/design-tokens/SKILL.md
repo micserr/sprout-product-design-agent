@@ -11,158 +11,115 @@ description: >
 
 This skill maps design intent to the correct token class. The system uses a **three-layer architecture** — never skip layers or reach into primitives from component code.
 
+For the full token list, see the references folder:
+- [`references/primitives.md`](references/primitives.md) — all palettes, shades, usage rules
+- [`references/color-tokens.md`](references/color-tokens.md) — all surface, semantic, text, border, outline tokens
+- [`references/typography.md`](references/typography.md) — all component typography classes
+- [`references/bridge-dark-mode.md`](references/bridge-dark-mode.md) — bridge layer, light/dark resolved values
+
 ---
 
 ## Layer Architecture
 
 ```
-Layer 1 — Primitives       --color-{palette}-{shade}         CSS vars only. Never use in components.
-Layer 2 — Bridge (semantic) @layer base :root / .dark         Maps primitives to semantic meaning.
-Layer 3 — Utilities        bg-{token}, .text-{token}, .border-{token}   Use these in components.
+Layer 1 — Primitives        --color-{palette}-{shade}               CSS vars only. Never use in components.
+Layer 2 — Bridge (semantic)  @layer base :root / .dark              Maps primitives to semantic meaning.
+Layer 3 — Utilities          bg-{token}, .text-{token}, .border-*  Use these in components.
 ```
 
 **Rule:** Components always use Layer 3. Layer 1 exists only in `style.css`.
+**Exception:** `ubas` palette (charts/data-viz only) — primitives used directly, e.g. `bg-ubas-500`.
 
 ---
 
-## Palette Reference
+## Surface Tokens (quick reference)
 
-Food-themed palette names map to semantic intent:
-
-| Palette | Shades | Intent |
-|---|---|---|
-| `white` | default | Context-aware: `#fff` in light, `mushroom-50` in dark |
-| `neutral` | 50–950 | Disabled states, overlays |
-| `mushroom` | 50–950 | Primary UI gray — most common |
-| `tomato` | 50–950 | Danger / destructive / errors |
-| `carrot` | 50–950 | Caution / warnings |
-| `mango` | 50–950 | Pending / in-progress |
-| `kangkong` | 50–950 | Brand / success (green) |
-| `wintermelon` | 50–950 | Accent (teal) |
-| `blueberry` | 50–950 | Information |
-| `ubas` | 50–950 | Charts / data-viz **ONLY** — never for UI states |
-
----
-
-## Surface Tokens
-
-Use surface tokens for backgrounds of pages, cards, panels, and inputs. These are in-theme and generate `bg-*` utilities.
+In-theme — generate `bg-*` utilities. Full table in `references/color-tokens.md`.
 
 | Class | Use when |
 |---|---|
-| `bg-surface-white` | Page or canvas background (topmost layer) |
-| `bg-surface-gray` | Main gray canvas / app shell background |
-| `bg-surface-adaptive` | Cards, panels, inputs — uses translucent overlay for elevation |
+| `bg-surface-white` | Page / canvas background — topmost layer |
+| `bg-surface-gray` | Main gray canvas / app shell |
+| `bg-surface` | Alias for surface-gray |
+| `bg-surface-adaptive` | Cards, panels, inputs — translucent elevation overlay |
 | `bg-surface-hover` | Hover state on any surface |
 | `bg-surface-pressed` | Pressed / mousedown state |
-| `bg-surface-disabled` | Disabled container background |
-| `bg-surface-inverted` | Dark surface in light mode (e.g. tooltips, dark modals) |
-| `bg-surface-active` | Selected / currently active item |
-| `bg-surface-active-soft` | Soft selected state (lighter than active) |
+| `bg-surface-disabled` | Disabled container |
+| `bg-surface-inverted` | Dark surface in light mode (tooltips, dark chips) |
+| `bg-surface-inverted-hover` | Hover on inverted surface |
+| `bg-surface-inverted-pressed` | Pressed on inverted surface |
+| `bg-surface-active` | Selected / active item |
+| `bg-surface-active-soft` | Soft selected state |
 
 ---
 
-## Semantic Color Families
+## Semantic Color Families (quick reference)
 
-These are in-theme tokens. Each family shares the same modifier pattern.
+Seven families: `brand` · `success` · `information` · `danger` · `pending` · `caution` · `accent`
 
-**Families:** `brand` · `success` · `information` · `danger` · `pending` · `caution` · `accent`
+Each has **9 tokens** — full list per family in `references/color-tokens.md`:
 
-| Modifier pattern | Class example | Use when |
+| Modifier | Class | Use when |
 |---|---|---|
-| `bg-{family}` | `bg-danger` | Filled background for this semantic state |
-| `bg-{family}-hover` | `bg-brand-hover` | Hover state on filled background |
-| `bg-{family}-pressed` | `bg-success-pressed` | Pressed state on filled background |
-| `bg-{family}-subtle` | `bg-caution-subtle` | Tinted/subtle background for soft indicators |
-| `bg-{family}-subtle-hover` | `bg-information-subtle-hover` | Hover on subtle background |
-| `text-{family}-text` | `text-danger-text` | Text color for this semantic state |
-| `text-{family}-text-subtle` | `text-brand-text-subtle` | Muted text color variant |
+| `{family}` | `bg-{family}` | Filled background for this state |
+| `{family}-hover` | `bg-{family}-hover` | Hover on filled background |
+| `{family}-pressed` | `bg-{family}-pressed` | Pressed state on filled background |
+| `{family}-subtle` | `bg-{family}-subtle` | Soft/tinted background |
+| `{family}-subtle-hover` | `bg-{family}-subtle-hover` | Hover on subtle background |
+| `{family}-subtle-pressed` | `bg-{family}-subtle-pressed` | Pressed on subtle background |
+| `{family}-text` | `text-{family}-text` | Text color for this state |
+| `{family}-text-hover` | `text-{family}-text-hover` | Text on hover |
+| `{family}-text-pressed` | `text-{family}-text-pressed` | Text on press |
 
-**Control tokens** (interactive form controls):
-`bg-control` · `bg-control-hover` · `bg-control-pressed`
+**Control tokens:** `bg-control` · `bg-control-hover` · `bg-control-pressed`
 
 ---
 
-## Component-Only Tokens (Text & Border)
+## Component-Only Tokens (quick reference)
 
-These do **not** generate Tailwind `bg-*` or `text-*` utilities. Use them as component classes directly.
+Do **not** generate Tailwind utilities. Use as classes directly.
 
-### Text classes
+**Text** — full table in `references/color-tokens.md`:
+`text-strong` · `text-supporting` · `text-base` · `text-weak` · `text-disabled` · `text-on-fill-disabled` · `text-inverted` · `text-inverted-base` · `text-inverted-weak` · `text-inverted-disabled`
 
-| Class | Use when |
-|---|---|
-| `.text-strong` | Primary content, headings |
-| `.text-base` | Default body text |
-| `.text-supporting` | Secondary / supporting copy |
-| `.text-weak` | Tertiary / hint text |
-| `.text-disabled` | Disabled text |
-| `.text-on-fill-disabled` | Disabled text on filled backgrounds |
-| `.text-inverted` | Text on dark/inverted surfaces |
-| `.text-inverted-weak` | Muted text on dark/inverted surfaces |
-
-### Border classes
-
-Always pair with `border` (for border-width) + the color class:
-
+**Border** — always pair with `border` for width:
 ```html
 <div class="border border-base">...</div>
 ```
+`border-strong` · `border-supporting` · `border-base` · `border-base-hover` · `border-base-pressed` · `border-weak` · `border-disabled` · `border-on-fill-disabled`
 
-| Class | Use when |
-|---|---|
-| `.border-strong` | High-emphasis borders, focus rings |
-| `.border-supporting` | Secondary border emphasis |
-| `.border-base` | Default border (most common) |
-| `.border-base-hover` | Border on hover |
-| `.border-base-pressed` | Border on press |
-| `.border-weak` | Subtle dividers, hairlines |
-| `.border-disabled` | Disabled element border |
-| `.border-on-fill-disabled` | Disabled border on filled background |
+**Outline** — same values as border, for `outline-color`:
+`outline-strong` · `outline-base` · `outline-weak` · _(same modifiers as border)_
 
 ---
 
 ## Dark Mode
 
-Toggle the `.dark` class on `<html>`. The CSS cascade resolves all bridge variables automatically.
+Toggle `.dark` on `<html>`. Never use media queries. All tokens adapt automatically.
 
-```html
-<!-- Light -->
-<html>...</html>
+Surface token resolved values (light → dark):
+- `bg-surface-white` → `#fff` light / `#262b2b` (mushroom-950) dark — darkest layer
+- `bg-surface-gray` → `mushroom-50` light / `#394141` (mushroom-900) dark
+- `bg-surface-adaptive` → translucent mushroom-950 overlay light / translucent white overlay dark
 
-<!-- Dark -->
-<html class="dark">...</html>
-```
-
-**Never use media queries for dark mode.** Never hardcode dark-mode colors in components. All tokens adapt automatically.
-
-Examples of what changes in `.dark`:
-- `bg-surface-white` → `mushroom-50` instead of `#fff`
-- `bg-surface-gray` → `mushroom-900` instead of `mushroom-50`
-- `bg-surface-adaptive` → 6% white overlay instead of 6% mushroom-950 overlay
+→ Full bridge values in `references/bridge-dark-mode.md`
 
 ---
 
-## Typography Tokens
+## Typography (quick reference)
 
-**Scale:** `text-100` through `text-1000` (rem values, 14px default at `text-300`)
+Full class list in `references/typography.md`.
 
-**Component classes** — use these instead of raw `text-{size}`:
-
-| Class | Use for |
+| Group | Classes |
 |---|---|
-| `.heading-xl` | Page-level hero titles |
-| `.heading-lg` | Section headings |
-| `.heading-md` | Card/panel titles |
-| `.heading-sm` | Sub-section titles |
-| `.heading-xs` | Compact headings |
-| `.subheading` | Supporting headings |
-| `.body` | Default body text (14px) |
-| `.body-medium` | Medium-weight body |
-| `.label-xs` | Labels, tags, overlines |
-| `.caption` | Small supporting text |
-| `.overline` | ALL CAPS label above content |
-| `.code` | Monospace code blocks |
-| `.typography` | Prose scope wrapper for long-form content |
+| Body | `body` · `body-medium` · `body-md` · `body-md-medium` · `body-lg` · `body-lg-medium` |
+| Label | `label-xs` · `label-xs-medium` · `label-sm` · `label-sm-medium` |
+| Heading | `heading-xl` · `heading-lg` · `heading-md` · `heading-sm` · `heading-xs` |
+| Subheading | `subheading-sm` · `subheading-xs` |
+| Utility | `caption` · `caption-medium` · `overline` · `code` |
+| Prose | `typography` (wrapper for long-form content) |
+
+Default body: 14px (`text-300`). Always use component classes — never raw `text-{size}`.
 
 ---
 
@@ -170,35 +127,32 @@ Examples of what changes in `.dark`:
 
 | Class | Value | Use for |
 |---|---|---|
-| `max-w-content-sm` | 640px | Narrow forms, modals |
-| `max-w-content-md` | 1000px | Standard content pages |
-| `max-w-content-lg` | 1320px | Wide layouts, dashboards |
-| `max-w-content-full` | 100% | Full-width containers |
+| `max-w-content-sm` | 640px | Narrow: forms, auth pages |
+| `max-w-content-md` | 1000px | Standard: dashboards, settings |
+| `max-w-content-lg` | 1320px | Wide: landing pages, full-width tables |
+| `max-w-content-full` | 100% | Edge-to-edge: full-bleed sections |
 
 ---
 
 ## Decision Guide
 
-Use this to pick the right token for any UI element:
-
 **Backgrounds:**
-1. Page/app shell → `bg-surface-gray`
+1. Page / app shell → `bg-surface-gray`
 2. Cards, panels, inputs → `bg-surface-adaptive`
-3. Page canvas (modal, overlay) → `bg-surface-white`
-4. Semantic state (error, success, etc.) → `bg-{family}` or `bg-{family}-subtle`
-5. Never use `bg-{primitive}` (e.g. ~~`bg-mushroom-100`~~) in component code
+3. Modal / overlay canvas → `bg-surface-white`
+4. Semantic state → `bg-{family}` or `bg-{family}-subtle`
+5. Never: ~~`bg-mushroom-100`~~ (primitive in component code)
 
 **Text:**
-1. Always use component classes (`.text-strong`, `.text-base`, etc.)
-2. Never use `text-{primitive}` (e.g. ~~`text-kangkong-600`~~)
-3. For semantic state text → `text-{family}-text` (e.g. `text-danger-text`)
+1. Use component-only classes: `text-strong`, `text-base`, `text-weak`, etc.
+2. Semantic state text: `text-{family}-text`
+3. Never: ~~`text-kangkong-600`~~ (primitive in component code)
 
 **Borders:**
-1. Always pair: `border` (width) + `.border-{modifier}` (color)
-2. Default → `border border-base`
-3. Subtle divider → `border border-weak`
-4. High emphasis → `border border-strong`
-5. Never use `border-{primitive}` in component code
+1. `border border-base` — default
+2. `border border-weak` — subtle divider
+3. `border border-strong` — high emphasis / focus ring
+4. Never: ~~`border-mushroom-300`~~ (primitive in component code)
 
 **Choosing a semantic family:**
 | Intent | Family |
