@@ -1,0 +1,84 @@
+# Typography tokens reference — sourced from tokens/design-tokens.yaml
+
+scale:
+  font_size:
+    tokens: "text-100 through text-1000 (rem)"
+    default_body: "0.875rem (14px) = text-300"
+  line_height:
+    tokens: "leading-100 through leading-1000"
+  letter_spacing:
+    tokens: "tracking-densest through tracking-widest"
+
+rule: "Always use component classes. Never use raw text-{size} utilities when a component class exists."
+
+component_classes:
+  body:
+    note: "Default body is 14px. Use component classes for consistent size + weight + leading."
+    classes:
+      - class: body
+        use: "Default body text (14px)"
+      - class: body-medium
+        use: "Medium-weight body"
+      - class: body-md
+        use: "Medium-size body (slightly larger than default)"
+      - class: body-md-medium
+        use: "Medium-size, medium-weight body"
+      - class: body-lg
+        use: "Large body text"
+      - class: body-lg-medium
+        use: "Large, medium-weight body"
+
+  label:
+    classes:
+      - class: label-xs
+        use: "Extra-small labels, tags, metadata"
+      - class: label-xs-medium
+        use: "Extra-small medium-weight label"
+      - class: label-sm
+        use: "Small labels"
+      - class: label-sm-medium
+        use: "Small medium-weight label"
+
+  heading:
+    classes:
+      - class: heading-xl
+        use: "Page-level hero titles"
+      - class: heading-lg
+        use: "Section headings"
+      - class: heading-md
+        use: "Card / panel titles"
+      - class: heading-sm
+        use: "Sub-section titles"
+      - class: heading-xs
+        use: "Compact / tight headings"
+
+  subheading:
+    classes:
+      - class: subheading-sm
+        use: "Small subheading beneath a heading"
+      - class: subheading-xs
+        use: "Extra-small subheading"
+
+  utility:
+    classes:
+      - class: caption
+        use: "Small supporting / meta text beneath content"
+      - class: caption-medium
+        use: "Medium-weight caption"
+      - class: overline
+        use: "ALL CAPS label above a heading or section"
+      - class: code
+        use: "Monospace code — inline or block"
+
+  prose:
+    classes:
+      - class: typography
+        use: "Wrapper for long-form prose content. Applies defaults to p, h1-h6, ul, ol etc. Not for UI chrome."
+
+font_families:
+  note: "Defined in :root. Applied automatically by component classes — do not reference in component code."
+  vars:
+    - var: --font-heading
+      applied_to: "heading component classes"
+    - var: --font-body
+      applied_to: "body and label component classes"

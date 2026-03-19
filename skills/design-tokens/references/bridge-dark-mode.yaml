@@ -1,0 +1,52 @@
+# Bridge layer and dark mode reference — sourced from tokens/design-tokens.yaml
+
+bridge:
+  scope: "@layer base :root and .dark"
+  light_mode: "References primitives via var() e.g. var(--color-mushroom-100)"
+  dark_mode: "Overrides with direct hex/oklch values — no var() chaining in .dark"
+
+dark_mode:
+  method: "Toggle .dark class on <html>"
+  rule_no_media_query: true
+  rule_no_hardcoded_in_components: true
+  note: "All tokens adapt automatically. Never hardcode dark-mode hex values in component code."
+
+  example:
+    light: "<html>"
+    dark: '<html class="dark">'
+
+surface_resolved_values:
+  note: "Exact light/dark resolved values for surface tokens from the bridge layer"
+  tokens:
+    - token: surface-white
+      light: "#fff"
+      dark: "#262b2b"
+      dark_palette_ref: "mushroom-950"
+      dark_note: "Darkest layer in dark mode — page canvas background"
+
+    - token: surface-gray
+      light: "var(--color-mushroom-50)"
+      dark: "#394141"
+      dark_palette_ref: "mushroom-900"
+      dark_note: "Main dark gray canvas"
+
+    - token: surface
+      light: "var(--color-mushroom-50)"
+      dark: "#394141"
+      dark_palette_ref: "mushroom-900"
+      dark_note: "Alias for surface-gray — same resolved value"
+
+    - token: surface-adaptive
+      light: "color-mix(in srgb, var(--color-mushroom-950) 6%, transparent)"
+      dark: "color-mix(in srgb, #eff1f1 6%, transparent)"
+      note: "Translucent overlay — creates elevation on any background. Works correctly on both surface-white and surface-gray."
+
+other_root_vars:
+  note: "Defined in :root only — no dark mode override"
+  vars:
+    - var: --page-gradient
+      purpose: "Background gradient for page canvas"
+    - var: --font-heading
+      purpose: "Font family for headings"
+    - var: --font-body
+      purpose: "Font family for body text"

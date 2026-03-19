@@ -12,10 +12,10 @@ description: >
 This skill maps design intent to the correct token class. The system uses a **three-layer architecture** — never skip layers or reach into primitives from component code.
 
 For the full token list, see the references folder:
-- [`references/primitives.md`](references/primitives.md) — all palettes, shades, usage rules
-- [`references/color-tokens.md`](references/color-tokens.md) — all surface, semantic, text, border, outline tokens
-- [`references/typography.md`](references/typography.md) — all component typography classes
-- [`references/bridge-dark-mode.md`](references/bridge-dark-mode.md) — bridge layer, light/dark resolved values
+- [`references/primitives.yaml`](references/primitives.yaml) — all palettes, shades, usage rules
+- [`references/color-tokens.yaml`](references/color-tokens.yaml) — all surface, semantic, text, border, outline tokens
+- [`references/typography.yaml`](references/typography.yaml) — all component typography classes
+- [`references/bridge-dark-mode.yaml`](references/bridge-dark-mode.yaml) — bridge layer, light/dark resolved values
 
 ---
 

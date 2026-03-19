@@ -1,0 +1,73 @@
+# Primitive palettes reference — sourced from tokens/design-tokens.yaml
+# Primitives are CSS custom properties in @theme as --color-{palette}-{shade}.
+# RULE: Never use primitives directly in component code (exception: ubas palette).
+
+rule: "Components use semantic tokens (Layer 3). Primitives exist only in style.css bridge layer."
+exception: "ubas palette — no semantic mapping exists; use primitives directly for data-viz."
+
+palettes:
+  - name: white
+    css_prefix: color-white
+    shades: [default]
+    usage: "Context-aware. Light = #fff. Dark = mushroom-50. Use bg-surface-white, not the primitive."
+    allowed_in_components: false
+
+  - name: neutral
+    css_prefix: color-neutral
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Disabled states, overlays, on-fill text. Do not use for primary UI surfaces or text — use mushroom instead."
+    allowed_in_components: false
+
+  - name: mushroom
+    css_prefix: color-mushroom
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Primary UI gray — surfaces, text, borders. Most-used palette."
+    allowed_in_components: false
+
+  - name: tomato
+    css_prefix: color-tomato
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Danger / semantic red."
+    allowed_in_components: false
+
+  - name: carrot
+    css_prefix: color-carrot
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Caution / warnings."
+    allowed_in_components: false
+
+  - name: mango
+    css_prefix: color-mango
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Pending / in-progress."
+    allowed_in_components: false
+
+  - name: kangkong
+    css_prefix: color-kangkong
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Brand / success (green)."
+    allowed_in_components: false
+
+  - name: wintermelon
+    css_prefix: color-wintermelon
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Accent (teal)."
+    allowed_in_components: false
+
+  - name: blueberry
+    css_prefix: color-blueberry
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Information."
+    allowed_in_components: false
+
+  - name: ubas
+    css_prefix: color-ubas
+    shades: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+    usage: "Charts / data-viz ONLY. No semantic mapping. Use primitives directly e.g. bg-ubas-500."
+    allowed_in_components: true
+
+shade_scale:
+  range: [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
+  lightest: 50
+  midtone: 500
+  darkest: 950

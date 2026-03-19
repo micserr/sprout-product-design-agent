@@ -1,0 +1,258 @@
+# Color tokens reference — sourced from tokens/design-tokens.yaml
+# All tokens listed exactly as they appear in the design system.
+
+surface_tokens:
+  type: in_theme
+  generates: bg-* utilities
+  note: "Use bg-{token} for all surface backgrounds"
+  tokens:
+    - token: surface-white
+      class: bg-surface-white
+      use: "Page or canvas background — topmost, lightest layer"
+    - token: surface-gray
+      class: bg-surface-gray
+      use: "Main gray canvas / app shell background"
+    - token: surface
+      class: bg-surface
+      use: "Alias for surface-gray — same resolved value"
+    - token: surface-adaptive
+      class: bg-surface-adaptive
+      use: "Cards, panels, inputs — translucent elevation overlay"
+    - token: surface-hover
+      class: bg-surface-hover
+      use: "Hover state on any surface"
+    - token: surface-pressed
+      class: bg-surface-pressed
+      use: "Pressed / mousedown state on a surface"
+    - token: surface-disabled
+      class: bg-surface-disabled
+      use: "Disabled container background"
+    - token: surface-inverted
+      class: bg-surface-inverted
+      use: "Dark surface in light mode — tooltips, dark chips"
+    - token: surface-inverted-hover
+      class: bg-surface-inverted-hover
+      use: "Hover state on inverted surface"
+    - token: surface-inverted-pressed
+      class: bg-surface-inverted-pressed
+      use: "Pressed state on inverted surface"
+    - token: surface-active
+      class: bg-surface-active
+      use: "Selected / currently active item background"
+    - token: surface-active-soft
+      class: bg-surface-active-soft
+      use: "Soft selected state — lighter than active"
+
+semantic_families:
+  type: in_theme
+  generates: bg-* and text-* utilities
+  modifier_pattern:
+    - modifier: "{family}"
+      class: "bg-{family}"
+      use: "Filled background for this semantic state"
+    - modifier: "{family}-hover"
+      class: "bg-{family}-hover"
+      use: "Hover on filled background"
+    - modifier: "{family}-pressed"
+      class: "bg-{family}-pressed"
+      use: "Pressed state on filled background"
+    - modifier: "{family}-subtle"
+      class: "bg-{family}-subtle"
+      use: "Soft/tinted background for subtle indicators"
+    - modifier: "{family}-subtle-hover"
+      class: "bg-{family}-subtle-hover"
+      use: "Hover on subtle background"
+    - modifier: "{family}-subtle-pressed"
+      class: "bg-{family}-subtle-pressed"
+      use: "Pressed state on subtle background"
+    - modifier: "{family}-text"
+      class: "text-{family}-text"
+      use: "Text color on or near this semantic state"
+    - modifier: "{family}-text-hover"
+      class: "text-{family}-text-hover"
+      use: "Text color on hover"
+    - modifier: "{family}-text-pressed"
+      class: "text-{family}-text-pressed"
+      use: "Text color on press"
+  families:
+    - name: brand
+      palette: kangkong
+      intent: "Primary actions, brand identity"
+      tokens:
+        - bg-brand
+        - bg-brand-hover
+        - bg-brand-pressed
+        - bg-brand-subtle
+        - bg-brand-subtle-hover
+        - bg-brand-subtle-pressed
+        - text-brand-text
+        - text-brand-text-hover
+        - text-brand-text-pressed
+    - name: success
+      palette: kangkong
+      intent: "Positive outcome, saved, complete"
+      tokens:
+        - bg-success
+        - bg-success-hover
+        - bg-success-pressed
+        - bg-success-subtle
+        - bg-success-subtle-hover
+        - bg-success-subtle-pressed
+        - text-success-text
+        - text-success-text-hover
+        - text-success-text-pressed
+    - name: information
+      palette: blueberry
+      intent: "Info, help, neutral notice"
+      tokens:
+        - bg-information
+        - bg-information-hover
+        - bg-information-pressed
+        - bg-information-subtle
+        - bg-information-subtle-hover
+        - bg-information-subtle-pressed
+        - text-information-text
+        - text-information-text-hover
+        - text-information-text-pressed
+    - name: danger
+      palette: tomato
+      intent: "Errors, destructive actions, delete"
+      tokens:
+        - bg-danger
+        - bg-danger-hover
+        - bg-danger-pressed
+        - bg-danger-subtle
+        - bg-danger-subtle-hover
+        - bg-danger-subtle-pressed
+        - text-danger-text
+        - text-danger-text-hover
+        - text-danger-text-pressed
+    - name: pending
+      palette: mango
+      intent: "Loading, in review, not yet complete"
+      tokens:
+        - bg-pending
+        - bg-pending-hover
+        - bg-pending-pressed
+        - bg-pending-subtle
+        - bg-pending-subtle-hover
+        - bg-pending-subtle-pressed
+        - text-pending-text
+        - text-pending-text-hover
+        - text-pending-text-pressed
+    - name: caution
+      palette: carrot
+      intent: "Warnings, needs attention"
+      tokens:
+        - bg-caution
+        - bg-caution-hover
+        - bg-caution-pressed
+        - bg-caution-subtle
+        - bg-caution-subtle-hover
+        - bg-caution-subtle-pressed
+        - text-caution-text
+        - text-caution-text-hover
+        - text-caution-text-pressed
+    - name: accent
+      palette: wintermelon
+      intent: "Highlights, secondary brand"
+      note: "Bridge vars named accent-fill internally to avoid shadcn-vue --accent conflict; Tailwind classes remain bg-accent etc."
+      tokens:
+        - bg-accent
+        - bg-accent-hover
+        - bg-accent-pressed
+        - bg-accent-subtle
+        - bg-accent-subtle-hover
+        - bg-accent-subtle-pressed
+        - text-accent-text
+        - text-accent-text-hover
+        - text-accent-text-pressed
+
+control_tokens:
+  type: in_theme
+  generates: bg-* utilities
+  use: "Interactive form controls — inputs, checkboxes, toggles"
+  tokens:
+    - bg-control
+    - bg-control-hover
+    - bg-control-pressed
+
+text_tokens:
+  type: component_only
+  generates: nothing
+  note: "Use as component class directly. Do NOT use as Tailwind utility."
+  usage_pattern: 'class="text-strong"'
+  tokens:
+    - token: text-strong
+      use: "Primary content, headings — highest emphasis"
+    - token: text-supporting
+      use: "Secondary / supporting copy"
+    - token: text-base
+      use: "Default body text"
+    - token: text-weak
+      use: "Tertiary / hint / placeholder text"
+    - token: text-disabled
+      use: "Disabled text"
+    - token: text-on-fill-disabled
+      use: "Disabled text on filled/colored backgrounds"
+    - token: text-inverted
+      use: "Text on dark/inverted surfaces — highest emphasis"
+    - token: text-inverted-base
+      use: "Default text on inverted surfaces"
+    - token: text-inverted-weak
+      use: "Muted text on inverted surfaces"
+    - token: text-inverted-disabled
+      use: "Disabled text on inverted surfaces"
+
+border_tokens:
+  type: component_only
+  generates: nothing
+  note: "Always pair 'border' (width) + the color class"
+  usage_pattern: 'class="border border-base"'
+  tokens:
+    - token: border-strong
+      use: "High-emphasis borders, focus rings"
+    - token: border-supporting
+      use: "Secondary border emphasis"
+    - token: border-base
+      use: "Default border — most common"
+    - token: border-base-hover
+      use: "Border color on hover"
+    - token: border-base-pressed
+      use: "Border color on press"
+    - token: border-weak
+      use: "Subtle dividers, hairlines"
+    - token: border-disabled
+      use: "Disabled element border"
+    - token: border-on-fill-disabled
+      use: "Disabled border on filled/colored background"
+
+outline_tokens:
+  type: component_only
+  note: "Same values as border tokens but for outline-color"
+  tokens:
+    - outline-strong
+    - outline-supporting
+    - outline-base
+    - outline-base-hover
+    - outline-base-pressed
+    - outline-weak
+    - outline-disabled
+    - outline-on-fill-disabled
+
+layout_tokens:
+  type: in_theme
+  generates: max-w-* utilities
+  tokens:
+    - token: max-w-content-sm
+      value: 640px
+      use: "Narrow: forms, auth pages, article text"
+    - token: max-w-content-md
+      value: 1000px
+      use: "Standard: dashboards, settings, most page bodies"
+    - token: max-w-content-lg
+      value: 1320px
+      use: "Wide: landing pages, full-width tables, marketing"
+    - token: max-w-content-full
+      value: 100%
+      use: "Edge-to-edge: full-bleed sections, hero backgrounds"
