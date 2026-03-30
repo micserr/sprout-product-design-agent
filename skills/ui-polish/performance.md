@@ -88,6 +88,15 @@ Shorthand props (`x`, `y`, `scale`) use `requestAnimationFrame` — not hardware
 <Motion :animate="{ transform: 'translateX(100px)' }" />
 ```
 
+### When to Use Motion at All
+
+Motion/Framer Motion is justified only for:
+- Orchestrated sequences (multiple elements in relation to each other)
+- Gesture-driven motion (drag, swipe)
+- Physics-based spring animations
+
+For everything else (hover states, button press, simple enter/exit), use CSS — no Motion overhead, no GPU caveat to manage. See `animations.md` for the full decision guide.
+
 ## CSS Variables Cascade Cost
 
 Changing a CSS variable on a parent recalculates styles for all children. For animations, update `transform` directly on the element instead.
