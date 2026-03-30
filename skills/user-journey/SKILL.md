@@ -32,7 +32,15 @@ A journey map is a markdown table organized by stage (columns) and the following
 1. **Identify the persona and goal.** Who is the user, and what are they trying to accomplish? Anchor the map to one primary persona and one primary goal.
 2. **Define the stages.** Adapt the default stage names to the product context. A B2B SaaS product has different stages than a consumer app.
 3. **Fill each row for each stage.** Work left to right, populating the table column by column. Be specific — avoid generic filler.
-4. **Highlight the critical moments.** After the table is complete, identify the 2–3 pain points with the highest impact and the 2–3 opportunities most worth pursuing.
+4. **Highlight the critical moments.** After the table is complete, identify the **top 3 pain points** with the highest impact and the top 3 opportunities most worth pursuing.
+
+   A **critical moment** is a touchpoint where failure causes drop-off, frustration, or abandonment. Identify it by frequency × impact on retention. When in doubt: if the user cannot complete their primary job at this touchpoint, it is critical.
+
+   **Specific vs. generic entry:**
+   - ✅ Specific: "User searches for 'payroll run' but finds it buried under Settings > Payroll > Run — expects it on the dashboard"
+   - ❌ Generic: "User is confused"
+
+   Keep entries specific enough that a designer can act on them directly.
 
 ### Output
 
@@ -85,7 +93,7 @@ flowchart TD
 2. **Map the happy path first.** Get the primary success path down before adding branches.
 3. **Add decision branches.** Every `{Decision}` node should have at least two labeled exits.
 4. **Add error and edge cases.** What happens when something fails? Where does the user land?
-5. **Keep to 1 screen = 1 node.** Don't bundle multiple screens into one node; keep the diagram honest.
+5. **Keep to 1 screen = 1 node.** Don't bundle multiple screens into one node; keep the diagram honest. Branches always get a diamond decision node. Abandoned paths (user gives up or exits) get a terminal node labeled `Drop-off: [reason]` — e.g., `Drop-off: password reset too complex`.
 
 ---
 
@@ -110,4 +118,4 @@ Produce four artifacts in this order:
 1. **Journey Map table** — full markdown table covering all stages and rows
 2. **User Flow diagram** — Mermaid `flowchart TD` code block showing the full flow with decision branches
 3. **Touchpoint summary** — a brief list of key touchpoints with channel and interaction type for each
-4. **Top 3 design recommendations** — concrete, prioritized recommendations derived directly from the pain points and opportunities identified in the map
+4. **Top 3 design recommendations** — concrete, prioritized recommendations derived directly from the **top 3 pain points** identified in the map. Each recommendation names the pain point it resolves.
