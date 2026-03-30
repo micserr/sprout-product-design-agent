@@ -139,7 +139,7 @@ stage.
 **Stack discovery** — before advancing to Phase 4, confirm the tech stack via `AskUserQuestion` one question at a time:
 
 1. **Design system** — auto-detect first:
-   - Check `package.json`: if `design-system-next` is a dependency → `DESIGN_SYSTEM = Toge v1`
+   - Check `package.json`: if any dependency key contains `design-system-next` (including scoped packages like `@company/design-system-next`) → `DESIGN_SYSTEM = Toge v1`
    - Check `components.json`: if `registries["@toge"]` is present → `DESIGN_SYSTEM = Toge v2`
    - If both found → `DESIGN_SYSTEM = Toge v2` (prefer Toge v2 for new code; note this to the user)
    - If neither found → ask: "Which design system does this project use — **Toge v1** (`design-system-next`), **Toge v2** (shadcn-vue registry), or a **custom/other** system?"

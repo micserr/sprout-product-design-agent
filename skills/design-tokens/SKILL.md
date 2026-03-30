@@ -127,7 +127,7 @@ Full class list in `references/typography.md`.
 | Utility | `caption` · `caption-medium` · `overline` · `code` |
 | Prose | `typography` (wrapper for long-form content) |
 
-Default body: 14px (`text-300`). Always use component classes — never raw `text-{size}`.
+Default body: 14px. Always use component classes — never raw `text-{size}` utilities (e.g., `text-sm`, `text-base`, `text-lg`).
 
 ---
 

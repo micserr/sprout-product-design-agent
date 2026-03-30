@@ -86,7 +86,7 @@ These apply regardless of framework or output format:
 All wireframes use a **bento layout** by default. Panels and sections are floating cards on a gray background, with visible gaps between them. Never use flush borders between adjacent panels.
 
 **Rules:**
-- Outer content area: `bg-gray-100 p-3 gap-3` — the gray shows through as the gutter
+- Outer content area: `flex gap-3 bg-gray-100 p-3` — the gray shows through as the gutter (`gap` requires `flex` or `grid` to apply)
 - Each panel/card: `bg-white rounded-xl shadow-sm` — no `border-r` or `border-l` between panels
 - Fixed side nav: full height, outside the bento grid
 - Top bar (if present): flush to the top, full width, with a bottom border
