@@ -10,7 +10,7 @@ Outer radius = inner radius + padding. Mismatched radii on nested elements is th
 outerRadius = innerRadius + padding
 ```
 
-If padding is larger than `24px`, treat the layers as separate surfaces and choose each radius independently.
+If padding is larger than `24px`, treat the layers as separate surfaces — use independent border radii on each layer. At this padding size, the outer and inner elements no longer share the same visual context, so applying `outerRadius = innerRadius + padding` would produce an outer radius that feels disconnected. Choose each radius based on the visual weight of its own element instead.
 
 ```css
 /* Good — concentric radii */
@@ -48,6 +48,8 @@ When geometric centering looks off, align optically instead.
 ### Buttons with Text + Icon
 
 Use slightly less padding on the icon side: `icon-side padding = text-side padding - 2px`.
+
+**Why 2px?** At 14–16px font size, the icon bounding box includes whitespace that makes the icon appear to have more padding than the text side. 2px is the minimum perceptual correction. At larger sizes (20px+), increase the correction to 4px.
 
 ```css
 .button-with-icon {

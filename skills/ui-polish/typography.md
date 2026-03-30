@@ -18,13 +18,15 @@ html {
 <html className="antialiased">
 ```
 
-Apply once at the root — not per-element. Other platforms ignore these properties, so it's safe to apply universally.
+Apply once at the root — not per-element. Other platforms ignore these properties, so it's safe to apply universally. `-webkit-font-smoothing: antialiased` is safe in both light and dark mode — no per-mode adjustment needed.
 
 ## Text Wrapping
 
 ### text-wrap: balance
 
 Distributes text evenly across lines, preventing orphaned words. **Only works on 6 lines or fewer** (Chromium) or 10 lines or fewer (Firefox) — the balancing algorithm is expensive.
+
+**Orphaned word:** A single word left alone on the last line of a heading or short text block. `text-balance` prevents this by redistributing line lengths. For body copy (longer than 6 lines), use `text-pretty` instead.
 
 ```css
 h1, h2, h3 {

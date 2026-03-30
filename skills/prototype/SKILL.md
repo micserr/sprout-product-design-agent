@@ -35,7 +35,19 @@ Before reading wireframes or writing any code, verify the project environment us
 | 3 | **Package compatibility** | Are all design system packages compatible with the confirmed framework and CSS version? Check for peer dependency conflicts (e.g. a design system that pins `tailwindcss@^3` installed alongside v4). Uninstall incompatible packages before proceeding. |
 | 4 | **Explicit dependencies** | Are routing and state management packages explicitly declared in `package.json`? Never assume transitive dependencies — if the prototype needs `vue-router` or `pinia`, they must be listed directly. Install any missing explicit deps before proceeding. |
 
-Do not advance to Step 1 until all applicable checks pass.
+**If any check fails: stop immediately. Do not generate any files.**
+
+Surface the issue via `AskUserQuestion` with:
+1. What was found (e.g., "Missing `@source` directive for `wireframes/` in your CSS config")
+2. What the fix is (e.g., "Add `@source '../wireframes/**/*.vue'` to your `app.css`")
+3. The question: "Should I apply this fix before continuing?"
+
+Only proceed after the user confirms. When proceeding, add a comment at the top of the first generated file documenting what was changed:
+```js
+// Pre-flight fix applied: [description of what was changed]
+```
+
+Do not advance to Step 1 until all applicable checks pass and any fixes are confirmed.
 
 ---
 
@@ -161,6 +173,46 @@ For each screen, implement the states the journey map flagged as pain points:
 - **Error state** — what happens when something goes wrong
 - **Success feedback** — snackbar, banner, or inline confirmation
 
+### Form Handling
+
+Every form in the prototype follows these patterns:
+
+- **Validation**: Show inline errors on blur (field loses focus), not on submit. Place error message directly below the field.
+- **Submission feedback**: Disable the submit button and show a spinner during the pending state. Minimum 300ms simulated delay so the state is visible.
+- **Error display**: Always use text + color + icon together — never color alone (accessibility requirement).
+- **Success**: Either navigate away OR show inline confirmation — never both. If navigating, pass a success flag via router state to show a toast on the destination screen.
+
+```vue
+<!-- Example: form submission pattern -->
+<script setup>
+const isSubmitting = ref(false)
+const error = ref(null)
+
+async function handleSubmit() {
+  isSubmitting.value = true
+  error.value = null
+  await new Promise(r => setTimeout(r, 500)) // simulate async
+  // success: navigate away
+  router.push({ name: 'SuccessScreen' })
+  // or error:
+  // error.value = 'Something went wrong. Please try again.'
+  // isSubmitting.value = false
+}
+</script>
+
+<template>
+  <button :disabled="isSubmitting" @click="handleSubmit">
+    <span v-if="isSubmitting">
+      <SpinnerIcon class="animate-spin" /> Saving…
+    </span>
+    <span v-else>Save</span>
+  </button>
+  <p v-if="error" class="text-danger-text flex items-center gap-1">
+    <ErrorIcon /> {{ error }}
+  </p>
+</template>
+```
+
 ### Transitions
 Use `<Transition>` for:
 - Modal/drawer open and close
@@ -194,7 +246,7 @@ to read and build production code from.
 | No inline styles | Tailwind classes + design system tokens only |
 | No hardcoded data | Mock data lives in composables, never inline in templates |
 | Composables return reactive state | `return { items, isLoading, selectedItem }` — not raw arrays |
-| Stores are lean | Pinia stores hold only cross-screen state; local UI state stays in the screen |
+| Stores are lean | Pinia stores hold only **cross-screen state** — any value read or written by 2+ screens. Local UI state (open/closed, selected tab, form field value) stays in the screen component as `ref`. When in doubt, keep it local until a second screen needs it. |
 
 **Composable pattern:**
 ```js
