@@ -11,7 +11,7 @@ description: >
 
 This skill produces a structured **Design QA report** that evaluates a screen or component against four pillars: **Visual Consistency**, **Design Token Compliance**, **Accessibility**, and **Interaction Readiness**. The output is a prioritized list of findings with severity ratings and actionable fixes — not a vague critique.
 
-**REQUIRED:** Before running the Token Compliance pillar, always load `toge:design-tokens`. Token checks must be validated against the actual token system — surface classes, semantic families, text tokens, border tokens, and typography classes defined there.
+**REQUIRED:** Before running the Token Compliance pillar, invoke the `toge:design-tokens` skill and read the token tables directly. Do not rely on memory — token names change between versions. Validate every finding against the actual token source (`guide/toge-design-system-v2/tokens/style.css` for Toge v2, `node_modules/design-system-next` for Toge v1).
 
 ---
 
@@ -43,6 +43,10 @@ This skill produces a structured **Design QA report** that evaluates a screen or
 2. **Run each pillar check.** Evaluate the design against each pillar's criteria below.
 3. **Log every finding.** Each finding gets a severity, pillar, location, and a concrete fix.
 4. **Summarize.** Count findings by severity. State whether the design is **Ready**, **Conditionally Ready**, or **Not Ready** for handoff.
+5. **Offer to fix.** After presenting the Findings Table, ask via `AskUserQuestion`:
+   > "Here are the QA findings. Which issues do you want me to fix? (all / just criticals / pick by number)"
+   Fix the selected issues in the same session. After fixing, confirm what was changed with a brief list.
+   **Critical issues block handoff** — if the user defers a Critical, note it explicitly in the summary.
 
 ---
 
@@ -50,11 +54,15 @@ This skill produces a structured **Design QA report** that evaluates a screen or
 
 ### Visual Consistency
 
-- [ ] Spacing follows the 4pt/8pt grid — no arbitrary pixel values
+- [ ] Spacing follows the grid — no arbitrary pixel values
+  - **8pt grid**: default for all layout spacing (gaps, padding, margins between elements)
+  - **4pt grid**: internal component spacing only (icon gaps, badge padding, input adornments)
 - [ ] Consistent alignment within and across sections (left-align or center-align, not both)
 - [ ] Typography hierarchy is clear: one H1, logical H2/H3 nesting, body text distinct from labels
 - [ ] Icon sizes are consistent within context (16px, 20px, 24px — don't mix)
 - [ ] Shadows and elevation are used consistently — not decoratively
+  - **Functional shadow**: communicates elevation or separates overlapping layers. Removing it would change the user's understanding of the layout.
+  - **Decorative shadow**: applied for aesthetics with no hierarchy purpose. Remove these.
 
 ### Token Compliance
 
@@ -70,12 +78,14 @@ This skill produces a structured **Design QA report** that evaluates a screen or
 
 ### Accessibility
 
-- [ ] Text/background contrast meets WCAG AA (4.5:1 for normal text, 3:1 for large text)
+- [ ] Text/background contrast meets WCAG AA: **4.5:1 for normal text**, **3:1 for large text**
+  - Large text = 18pt (24px) regular OR 14pt (18.67px) bold. Everything else is normal text.
 - [ ] Interactive elements are at least 44×44px touch targets
 - [ ] All form inputs have visible, associated labels (not just placeholder text)
 - [ ] Focus states are visible and distinct — not just a color change
 - [ ] Icons used without text have an accessible label or tooltip defined
 - [ ] Error states include both color and a text message — never color alone
+- [ ] **Dark mode** (if in scope): run all 4 pillars twice — once in light mode, once in dark mode. Tag findings that only appear in one mode with `[dark only]` or `[light only]` in the Findings Table.
 
 ### Interaction Readiness
 
