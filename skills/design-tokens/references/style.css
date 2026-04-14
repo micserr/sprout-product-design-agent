@@ -918,14 +918,12 @@
   .label-sm-medium {
     font-size: var(--text-400); /* 14px */
     line-height: var(--leading-500); /* 1.375 */
-    letter-spacing: var(--tracking-wide); /* 0.025em */
     font-family: var(--font-body);
   }
   .label-xs,
   .label-xs-medium {
     font-size: var(--text-300); /* 12px — was 14px */
     line-height: var(--leading-400); /* 1.375 */
-    letter-spacing: var(--tracking-wide); /* 0.025em */
     font-family: var(--font-body);
   }
   .label-sm,
