@@ -34,8 +34,8 @@ Before reading wireframes or writing any code, verify the project environment us
 | 2 | **Source scanning completeness** | Does the bundler scan every directory containing component files? Verify that `wireframes/`, `prototype/`, and any directory outside the default source root is included in `@source` directives (v4) or `content` globs (v3). Add missing entries before proceeding. |
 | 3 | **Package compatibility** | Are all design system packages compatible with the confirmed framework and CSS version? Check for peer dependency conflicts (e.g. a design system that pins `tailwindcss@^3` installed alongside v4). Uninstall incompatible packages before proceeding. |
 | 4 | **Explicit dependencies** | Are routing and state management packages explicitly declared in `package.json`? Never assume transitive dependencies — if the prototype needs `vue-router` or `pinia`, they must be listed directly. Install any missing explicit deps before proceeding. |
-| 5 | **Toge version gate** | Read `package.json`. If `design-system-next` or `@toge-design-system/toge` is present → Toge v1 → MCP tools are appropriate. If neither is present and `components.json` has `registries["@toge"]` → Toge v2 → use CLI installer only. **Never call MCP tools for Toge v2 under any circumstances.** If version cannot be determined, ask via `AskUserQuestion` before any install step. |
-| 6 | **Design system components installed** | Before writing any prototype code, verify that design system component files exist in the project (e.g., `src/components/ui/` for Toge v2). If they don't exist, run the bulk installer first. Then read the installed component files to understand actual prop signatures, variants, and slot names. Component discovery must happen before the first line of prototype code is written. |
+| 5 | **Toge sanity check** | This skill assumes Toge (shadcn-vue registry). Verify `components.json` exists and has `registries["@toge"]`. If missing or the registry is absent, surface a warning via `AskUserQuestion` before continuing. **Never call `mcp__design-system-toge__*` tools** — MCP reflects Toge v1 and returns wrong data for Toge. Use CLI installer and installed files in `src/components/ui/` only. |
+| 6 | **Design system components installed** | Before writing any prototype code, verify that design system component files exist in the project (e.g., `src/components/ui/` for Toge). If they don't exist, run the bulk installer first. Then read the installed component files to understand actual prop signatures, variants, and slot names. Component discovery must happen before the first line of prototype code is written. |
 
 **If any check fails: stop immediately. Do not generate any files.**
 
@@ -78,24 +78,18 @@ wireframe doesn't appear in the flow, flag it — it may be a secondary state of
 
 ## Step 2 — Read the Design System Guide
 
-Check the `DESIGN_SYSTEM` value carried forward from the design brief:
+This skill uses **Toge** (shadcn-vue registry). Read `guide/toge-design-system-v2/README.md` before writing any component.
 
-- **Toge v1** → read `guide/toge-design-system-v1/README.md`
-  - Use `spr-` prefixed components: `<spr-button>`, `<spr-input>`, `<spr-modal>`
-  - Use `spr-` Tailwind tokens for color, typography, border-radius
-- **Toge v2** → read `guide/toge-design-system-v2/README.md`
-  - Components were pulled via `npx shadcn-vue@latest add https://toge-ds.azurewebsites.net/r/ui/[component].json`
-  - Import from `@/components/ui/[component-name]`
-  - **Hard rule for Toge v2:** Do NOT call `mcp__design-system-toge__*` tools. MCP reflects Toge v1 tokens and components — calling it for a Toge v2 project returns wrong data. Use only the installed files in `src/components/ui/` and `guide/toge-design-system-v2/`.
+- Components are pulled via `npx shadcn-vue@latest add https://toge-ds.azurewebsites.net/r/ui/[component].json`
+- Import from `@/components/ui/[component-name]`
+- Do NOT call `mcp__design-system-toge__*` tools — MCP reflects Toge v1 and returns wrong data. Use only the installed files in `src/components/ui/` and `guide/toge-design-system-v2/`.
 
 **Hard rule:** Never use raw hex colors or grayscale placeholders from the wireframe.
 Every color in the prototype must come from the design system.
 
-**Token enforcement (Toge v2):** If `DESIGN_SYSTEM` is **Toge v2**, read `guide/toge-design-system-v2/tokens/token-mapping.yaml` before writing any component. Every default Tailwind color class (`bg-gray-*`, `text-gray-*`, `bg-red-*`, `bg-emerald-*`, `bg-blue-*`, `bg-yellow-*`, `bg-orange-*`) is a violation — replace it with the mapped token before committing output. The design system clears all default Tailwind colors (`--color-*: initial`) so these classes silently render nothing at runtime.
+**Token enforcement:** Read `guide/toge-design-system-v2/tokens/token-mapping.yaml` before writing any component. Every default Tailwind color class (`bg-gray-*`, `text-gray-*`, `bg-red-*`, `bg-emerald-*`, `bg-blue-*`, `bg-yellow-*`, `bg-orange-*`) is a violation — replace it with the mapped token before committing output. The design system clears all default Tailwind colors (`--color-*: initial`) so these classes silently render nothing at runtime.
 
-**Known naming collision (Toge v2) — read before writing any text class:** Do not combine `text-base` with another font-size utility on the same element. The design system defines `.text-base` as `color: var(--text-base)` in `@layer components`, but Tailwind also defines `text-base` as `font-size: 1rem` in `@layer utilities`. The utilities layer wins for `font-size`, so `text-xs text-base` silently becomes 1rem. Use `text-base` alone when 1rem font-size is acceptable, or use `text-strong` / `text-weak` when a specific font-size is also needed.
-
-**Token enforcement (Toge v1):** If `DESIGN_SYSTEM` is **Toge v1**, tokens use the `spr-` prefix. Read `guide/toge-design-system-v1/README.md` for the token list. No separate mapping file needed.
+**Known naming collision — read before writing any text class:** Do not combine `text-base` with another font-size utility on the same element. The design system defines `.text-base` as `color: var(--text-base)` in `@layer components`, but Tailwind also defines `text-base` as `font-size: 1rem` in `@layer utilities`. The utilities layer wins for `font-size`, so `text-xs text-base` silently becomes 1rem. Use `text-base` alone when 1rem font-size is acceptable, or use `text-strong` / `text-weak` when a specific font-size is also needed.
 
 ---
 
