@@ -8,7 +8,7 @@ Ready-to-use prompts for every skill and workflow. Copy, fill in the brackets, a
 
 **Start from a PRD or Intent doc — standard entry point**
 ```
-Design agent, here's the PRD: [file path or paste content]
+Toge, here's the PRD: [file path or paste content]
 
 Run the full product design workflow.
 ```
@@ -25,9 +25,9 @@ Skip to Phase 3. Here's the context:
 - Product: [product name]
 - Enriched brief: [file path to secondary-research output]
 - User journey already mapped: [paste or describe it]
-- Stack: Vue 3 · Tailwind v4 · Toge v2
+- Stack: Vue 3 · Tailwind v4 · Toge
 
-Wireframe the most critical screens.
+Prototype the most critical screens.
 ```
 
 ---
@@ -67,28 +67,10 @@ Anchor pain points on: [FP-1 description] and [FP-2 description].
 Include a journey map table and a Mermaid flow diagram. Focus on the critical path.
 ```
 
-### Wireframing
-
-**Single screen**
-```
-Wireframe a [screen type] for [product name].
-Use the bento layout. Placeholder content should be realistic, not Lorem Ipsum.
-```
-
-**Multiple screens**
-```
-Wireframe the following screens for [product name]:
-1. [Screen name] — [one-line purpose]
-2. [Screen name] — [one-line purpose]
-3. [Screen name] — [one-line purpose]
-
-Use the bento layout. Save as wireframes/01-[name].vue, etc.
-```
-
 ### Prototype
 ```
 Turn the wireframes in wireframes/ into a fully interactive prototype.
-Stack: Vue 3 · Tailwind v4 · Toge v2 · entry: prototype/main.js · dark mode: yes
+Stack: Vue 3 · Tailwind v4 · Toge · entry: prototype/main.js · dark mode: yes
 Wire all screens together with real navigation. Add edge states where the journey map flagged pain points.
 ```
 
@@ -114,15 +96,15 @@ Is this design ready for frontend handoff?
 [paste code or describe the screen]
 ```
 
-### UI Polish
+### Animations
 ```
 This [component / screen] feels off. Review it and give me specific fixes for animations, surfaces, and typography.
 [paste code]
 ```
 
 ```
-Apply a full UI polish pass to the prototype in prototype/screens/.
-Go screen by screen: typography, surfaces, animations, performance — in that order.
+Apply animations and micro-interactions to the prototype in prototype/screens/.
+Go screen by screen: hover states, enter/exit transitions, button feedback, icon state changes.
 ```
 
 ---
