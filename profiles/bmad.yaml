@@ -17,15 +17,13 @@ description: >
   lives in planning-artifacts/ux/prototype/.
 
 artifact_locations:
-  ux_readiness:        "_bmad-output/planning-artifacts/ux/ux-readiness-{feature}.md"
-  ux_brief:            "_bmad-output/planning-artifacts/ux/ux-brief-{feature}.md"
-  ux_journey:          "_bmad-output/planning-artifacts/ux/ux-journey-{feature}.md"
+  ux_screen_spec:      "_bmad-output/planning-artifacts/ux/ux-screen-spec-{feature}.md"
   prototype_manifest:  "_bmad-output/planning-artifacts/ux/prototype/prototype-manifest-{feature}.md"
   ux_qa:               "_bmad-output/planning-artifacts/ux/ux-qa-{feature}-{date}.md"
-  ux_animations:       "_bmad-output/planning-artifacts/ux/ux-animations-{feature}.md"
-  ux_feedback:         "_bmad-output/planning-artifacts/ux/ux-feedback-{feature}-{date}.md"
+  ui_feedback:         "_bmad-output/planning-artifacts/ux/ui-feedback-{feature}-{date}.md"
   ux_handoff:          "_bmad-output/planning-artifacts/ux/ux-handoff-{feature}.md"
   ux_audit:            "_bmad-output/planning-artifacts/ux/ux-audit-{feature}-{date}.md"
+  ux_learnings:        "_bmad-output/state/ux-learnings.md"   # team-wide; no {feature} — shared across all features
   workflow_state:      "_bmad-output/state/ux-workflow-{feature}.yaml"
 
 input_sources:

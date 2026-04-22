@@ -90,10 +90,8 @@ Called by every Sprout skill after it writes an artifact. Appends an entry to `a
 2. Load the ledger (call `init` if absent).
 3. Look for an existing entry with the same `kind` + `skill`. If found, update it (don't duplicate). Else append.
 4. Update `next_recommended:` based on a small decision table:
-   - After `ux-readiness` verdict=ready → recommend `user-journey`, `prototype`.
-   - After `ux-readiness` verdict=conditional → recommend `prd-ux-validator` (to enrich gaps) before continuing.
-   - After `ux-readiness` verdict=blocked → recommend PM input; empty `next_recommended`.
-   - After `user-journey` → recommend `prototype`.
+   - After `ux-screen-spec` → recommend `prototype`.
+   - After `user-journey` (optional) → recommend `prototype`.
    - After `prototype-manifest` → recommend `design-qa`, `animations`.
    - After `ux-qa` handoff_status=ready → recommend `animations` (optional) or `handoff`.
    - After `handoff` status=ready → no next; downstream agents take over.

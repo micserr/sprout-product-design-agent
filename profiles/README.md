@@ -45,7 +45,7 @@ extends: vanilla
 
 artifact_locations:
   # Override just the paths that differ — everything else inherits from vanilla
-  ux_readiness: "design-docs/{feature}/readiness.md"
+  ux_screen_spec: "design-docs/{feature}/screen-spec.md"
   ux_qa: "design-docs/{feature}/qa-{date}.md"
 
 coexistence_agents:
@@ -72,4 +72,4 @@ Install adapters (`adapters/claude.sh`, `adapters/bmad.sh`, etc.) ask which prof
 
 ## Relationship to the Sprout core
 
-Skills never reference paths directly. They reference **kinds** (e.g., `kind: ux-readiness`). At invocation, Sprout resolves `kind → profile.artifact_locations[kind] → path`. This is what makes skills portable across teams.
+Skills never reference paths directly. They reference **kinds** (e.g., `kind: ux-screen-spec`). At invocation, Sprout resolves `kind → profile.artifact_locations[kind] → path`. This is what makes skills portable across teams.

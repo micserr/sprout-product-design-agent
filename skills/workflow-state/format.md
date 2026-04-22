@@ -22,7 +22,7 @@ blocked: []
 drift: []
 ```
 
-## After `prd-gap-analyzer` records
+## After Phase 0 (screen spec) records
 
 ```yaml
 schema_version: "1"
@@ -33,22 +33,20 @@ source_prd_hash: 4f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2
 source_ux_design: _bmad-output/planning-artifacts/ux/ux-design-policy-prep-tool.md
 source_ux_design_hash: 9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e
 artifacts:
-  - kind: ux-readiness
-    skill: prd-gap-analyzer
-    path: _bmad-output/planning-artifacts/ux/ux-readiness-policy-prep-tool.md
+  - kind: ux-screen-spec
+    skill: product-design
+    path: _bmad-output/planning-artifacts/ux/ux-screen-spec-policy-prep-tool.md
     produced: 2026-04-17
     agent: sprout-design-agent
-    verdict: ready
     source_hashes:
       prd: 4f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2d
 next_recommended:
-  - user-journey
   - prototype
 blocked: []
 drift: []
 ```
 
-## Mid-workflow (readiness, journey, prototype, QA all done)
+## Mid-workflow (spec, prototype, QA all done)
 
 ```yaml
 schema_version: "1"
@@ -59,21 +57,13 @@ source_prd_hash: 4f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2
 source_ux_design: _bmad-output/planning-artifacts/ux/ux-design-policy-prep-tool.md
 source_ux_design_hash: 9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e
 artifacts:
-  - kind: ux-readiness
-    skill: prd-gap-analyzer
-    path: _bmad-output/planning-artifacts/ux/ux-readiness-policy-prep-tool.md
+  - kind: ux-screen-spec
+    skill: product-design
+    path: _bmad-output/planning-artifacts/ux/ux-screen-spec-policy-prep-tool.md
     produced: 2026-04-17
     agent: sprout-design-agent
-    verdict: ready
     source_hashes:
       prd: 4f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2d
-  - kind: ux-journey
-    skill: user-journey
-    path: _bmad-output/planning-artifacts/ux/ux-journey-policy-prep-tool.md
-    produced: 2026-04-17
-    agent: sprout-design-agent
-    source_hashes:
-      ux-design: 9a0e1f2d3c4b5a6e7f8d9c3a2b1e5f6d7c8b9a0e1f2d3c4b5a6e7f8d9c3a2b1e
   - kind: prototype-manifest
     skill: prototype
     path: _bmad-output/planning-artifacts/ux/prototype/prototype-manifest-policy-prep-tool.md
@@ -105,10 +95,10 @@ drift:
   - upstream_kind: prd
     upstream_path: _bmad-output/planning-artifacts/prd/prd-policy-prep-tool.md
     affected_artifacts:
-      - ux-readiness
+      - ux-screen-spec
       - prototype-manifest
     detected_at: 2026-04-19
-    recommended_action: "Re-run prd-gap-analyzer and prototype"
+    recommended_action: "Re-run Phase 0 screen spec translation and prototype"
 ```
 
 The ledger doesn't automatically re-run anything. It surfaces the drift so the human (or design-audit skill) can decide.

@@ -21,7 +21,7 @@ These two constraints together force an architecture that separates **universal 
 
 ### Design principle
 
-**Skill logic is universal. Artifact packaging is profile-specific.** A readiness check is a readiness check whether the output lands at `_bmad-output/planning-artifacts/ux/ux-readiness-policy-prep-tool.md` or `docs/design/readiness-checkout-flow.md`. The skill doesn't care — the profile tells it where to write and in what front-matter shape.
+**Skill logic is universal. Artifact packaging is profile-specific.** A screen spec is a screen spec whether the output lands at `_bmad-output/planning-artifacts/ux/ux-screen-spec-policy-prep-tool.md` or `docs/design/screen-spec-checkout-flow.md`. The skill doesn't care — the profile tells it where to write and in what front-matter shape.
 
 ### Anchor decisions (all confirmed)
 
@@ -53,13 +53,11 @@ Schemas describe the *body* of each artifact type — the data inside, not where
 |---|---|
 | `contracts/prd.schema.yaml` | Inbound PRD (shape-tolerant: BMAD's 11-section format, Linear doc, Notion export, plain markdown) |
 | `contracts/ux-design.schema.yaml` | Sally's UX spec (BMAD-specific; optional input for non-BMAD profiles) |
-| `contracts/ux-readiness.schema.yaml` | Readiness verdict + check results |
-| `contracts/ux-brief.schema.yaml` | Enriched design brief |
-| `contracts/ux-journey.schema.yaml` | Journey map + flow diagram + pain points |
+| `contracts/ux-screen-spec.schema.yaml` | Screen inventory, actors, states, flow, open design decisions |
+| `contracts/ux-journey.schema.yaml` | Journey map + flow diagram + pain points (optional) |
 | `contracts/prototype-manifest.schema.yaml` | Screens, routes, components, stack header |
 | `contracts/ux-qa.schema.yaml` | Findings table + handoff status |
-| `contracts/ux-animations.schema.yaml` | Animation decisions log |
-| `contracts/ux-feedback.schema.yaml` | Feedback-ingestion changelog |
+| `contracts/ui-feedback.schema.yaml` | UI feedback triage record |
 | `contracts/ux-handoff.schema.yaml` | Dev-ready manifest |
 | `contracts/ux-audit.schema.yaml` | Cross-artifact coherence report |
 | `contracts/workflow-state.schema.yaml` | Ledger shape |
@@ -104,13 +102,10 @@ display_name: BMAD (implem-aidlc)
 description: Full BMAD mesh with Sally, John, Winston coexistence
 
 artifact_locations:
-  ux_readiness: "_bmad-output/planning-artifacts/ux/ux-readiness-{feature}.md"
-  ux_brief: "_bmad-output/planning-artifacts/ux/ux-brief-{feature}.md"
-  ux_journey: "_bmad-output/planning-artifacts/ux/ux-journey-{feature}.md"
+  ux_screen_spec: "_bmad-output/planning-artifacts/ux/ux-screen-spec-{feature}.md"
   prototype_manifest: "_bmad-output/planning-artifacts/ux/prototype/prototype-manifest-{feature}.md"
   ux_qa: "_bmad-output/planning-artifacts/ux/ux-qa-{feature}-{date}.md"
-  ux_animations: "_bmad-output/planning-artifacts/ux/ux-animations-{feature}.md"
-  ux_feedback: "_bmad-output/planning-artifacts/ux/ux-feedback-{feature}-{date}.md"
+  ui_feedback: "_bmad-output/planning-artifacts/ux/ui-feedback-{feature}-{date}.md"
   ux_handoff: "_bmad-output/planning-artifacts/ux/ux-handoff-{feature}.md"
   ux_audit: "_bmad-output/planning-artifacts/ux/ux-audit-{feature}-{date}.md"
   workflow_state: "_bmad-output/state/ux-workflow-{feature}.yaml"
@@ -168,18 +163,18 @@ contract:
       required: true
       fallback_for: ux_design
   writes:
-    - kind: ux_readiness                           # resolved via profile.artifact_locations
-      schema: contracts/ux-readiness.schema.yaml
+    - kind: ux_screen_spec                         # resolved via profile.artifact_locations
+      schema: contracts/ux-screen-spec.schema.yaml
   preconditions:
-    - "PRD contains a Functional Requirements section (heading match: /^##?\\s+Functional Requirements/i)"
-    - "PRD identifies at least one persona with specific context"
+    - "At least one input document parses successfully"
+    - "Input contains at least a feature name AND a problem or objective statement"
   postconditions:
     - "Output front-matter lists source artifacts in inputDocuments"
-    - "Output includes a design-readiness verdict: ready | conditional | blocked"
+    - "Output includes at least one actor and one screen with states"
     - "Profile's workflow_state ledger updated (if ledger is enabled for this profile)"
 ```
 
-The skill never writes a literal path. It writes to the profile-resolved `kind: ux_readiness` location. Swap profile → same skill writes elsewhere.
+The skill never writes a literal path. It writes to the profile-resolved `kind: ux_screen_spec` location. Swap profile → same skill writes elsewhere.
 
 ### 5. Workflow state ledger (profile-declared)
 
@@ -195,12 +190,11 @@ source_prd_hash: <sha256>
 source_ux_design: _bmad-output/planning-artifacts/ux/ux-design-policy-prep-tool.md
 source_ux_design_hash: <sha256>
 artifacts:
-  - kind: ux_readiness
-    skill: prd-gap-analyzer
-    path: _bmad-output/planning-artifacts/ux/ux-readiness-policy-prep-tool.md
+  - kind: ux_screen_spec
+    skill: product-design
+    path: _bmad-output/planning-artifacts/ux/ux-screen-spec-policy-prep-tool.md
     produced: 2026-04-17
-    verdict: ready
-next_recommended: [user-journey, prototype]
+next_recommended: [prototype]
 blocked: []
 drift: []
 ```
@@ -227,7 +221,7 @@ Output: `ux_audit` kind — path resolved via profile.
 ### BMAD profile example (Policy Prep Tool, real feature)
 
 1. John's PRD already at `planning-artifacts/prd/prd-policy-prep-tool.md`.
-2. Designer invokes `bmad-sprout-prd-gap-analyzer`. Skill reads `~/.claude/sprout-profile.yaml` → bmad. Writes to `planning-artifacts/ux/ux-readiness-policy-prep-tool.md`. Updates `_bmad-output/state/ux-workflow-policy-prep-tool.yaml`.
+2. Designer invokes `bmad-sprout-prd-gap-analyzer`. Skill reads `~/.claude/sprout-profile.yaml` → bmad. Writes to `planning-artifacts/ux/ux-screen-spec-policy-prep-tool.md`. Updates `_bmad-output/state/ux-workflow-policy-prep-tool.yaml`.
 3. Sally runs `bmad-create-ux-design` → `ux-design-policy-prep-tool.md`.
 4. Designer invokes `bmad-sprout-user-journey`. Skill sees Sally's UX spec (profile's `preferred_when_present`), reads it, writes `ux-journey-policy-prep-tool.md`.
 5. Designer invokes `bmad-sprout-prototype`. Code written to `../implem-prototype/`; manifest at `planning-artifacts/ux/prototype/prototype-manifest-policy-prep-tool.md`.
@@ -252,7 +246,7 @@ Same skills. Same rigor. Different outputs.
 ### 1. Write all contract schemas
 - `contracts/prd.schema.yaml` (shape-tolerant)
 - `contracts/ux-design.schema.yaml` (BMAD-specific; referenced only by BMAD profile)
-- `contracts/ux-readiness.schema.yaml`, `ux-brief.schema.yaml`, `ux-journey.schema.yaml`, `prototype-manifest.schema.yaml`, `ux-qa.schema.yaml`, `ux-animations.schema.yaml`, `ux-feedback.schema.yaml`, `ux-handoff.schema.yaml`, `ux-audit.schema.yaml`
+- `contracts/ux-screen-spec.schema.yaml`, `ux-journey.schema.yaml`, `prototype-manifest.schema.yaml`, `ux-qa.schema.yaml`, `ui-feedback.schema.yaml`, `ux-handoff.schema.yaml`, `ux-audit.schema.yaml`
 - `contracts/workflow-state.schema.yaml`
 - `contracts/profile.schema.yaml`
 - `contracts/README.md` — schema system overview
@@ -310,7 +304,7 @@ Output verdicts: `ready` / `conditional` / `blocked`.
 **Contracts:**
 - `contracts/README.md`
 - `contracts/profile.schema.yaml`
-- `contracts/prd.schema.yaml`, `ux-design.schema.yaml`, `ux-readiness.schema.yaml`, `ux-brief.schema.yaml`, `ux-journey.schema.yaml`, `prototype-manifest.schema.yaml`, `ux-qa.schema.yaml`, `ux-animations.schema.yaml`, `ux-feedback.schema.yaml`, `ux-handoff.schema.yaml`, `ux-audit.schema.yaml`, `workflow-state.schema.yaml`
+- `contracts/prd.schema.yaml`, `ux-design.schema.yaml`, `ux-screen-spec.schema.yaml`, `ux-journey.schema.yaml`, `prototype-manifest.schema.yaml`, `ux-qa.schema.yaml`, `ui-feedback.schema.yaml`, `ux-handoff.schema.yaml`, `ux-audit.schema.yaml`, `workflow-state.schema.yaml`
 
 **Profiles:**
 - `profiles/README.md`
@@ -338,7 +332,7 @@ Output verdicts: `ready` / `conditional` / `blocked`.
 
 1. **Schema validity:** every `contracts/*.schema.yaml` parses as valid YAML.
 2. **Profile validity:** `profiles/bmad.yaml` and `profiles/vanilla.yaml` both validate against `contracts/profile.schema.yaml`.
-3. **BMAD dry run (real):** against the real `Sprout-Solutions-Ph/implem-aidlc` Policy Prep Tool PRD. Invoke retrofitted `prd-gap-analyzer`. Expected output at `_bmad-output/planning-artifacts/ux/ux-readiness-policy-prep-tool.md` with BMAD front-matter, ledger updated at `_bmad-output/state/ux-workflow-policy-prep-tool.yaml`.
+3. **BMAD dry run (real):** against the real `Sprout-Solutions-Ph/implem-aidlc` Policy Prep Tool PRD. Invoke `prd-gap-analyzer`. Expected output at `_bmad-output/planning-artifacts/ux/ux-screen-spec-policy-prep-tool.md` with BMAD front-matter, ledger updated at `_bmad-output/state/ux-workflow-policy-prep-tool.yaml`.
 4. **Vanilla dry run:** set vanilla profile, point skill at a simple `product-spec.md` in a bare repo. Expected output at `docs/design/readiness-{feature}.md` with minimal front-matter, no ledger.
 5. **Precondition failure:** stub PRD missing FR section. Skill refuses, names failed precondition.
 6. **Postcondition failure:** force-write malformed output. Postcondition catches before ledger update.
@@ -370,15 +364,12 @@ Add to `docs/pipeline-standard.md` § 3 "Design & Prototyping":
 ```markdown
 | Input | Output | Output Location |
 |-------|--------|-----------------|
-| PRD | UX Readiness Check | `planning-artifacts/ux/ux-readiness-{feature}.md` |
-| PRD + Readiness | Enriched UX Brief | `planning-artifacts/ux/ux-brief-{feature}.md` |
-| PRD or UX Spec | User Journey | `planning-artifacts/ux/ux-journey-{feature}.md` |
-| UX Spec or Brief | Prototype Manifest | `planning-artifacts/ux/prototype/prototype-manifest-{feature}.md` |
+| Product Outcome + Product Unit | Screen Spec | `planning-artifacts/ux/ux-screen-spec-{feature}.md` |
+| Screen Spec | Prototype Manifest | `planning-artifacts/ux/prototype/prototype-manifest-{feature}.md` |
 | Prototype Manifest | UX QA Report | `planning-artifacts/ux/ux-qa-{feature}-{date}.md` |
-| Prototype | UX Animations Plan | `planning-artifacts/ux/ux-animations-{feature}.md` |
-| Prototype + Feedback.md | UX Feedback Changelog | `planning-artifacts/ux/ux-feedback-{feature}-{date}.md` |
+| Prototype + UI Feedback | UI Feedback Triage | `planning-artifacts/ux/ui-feedback-{feature}-{date}.md` |
 | All UX artifacts | UX Handoff Manifest | `planning-artifacts/ux/ux-handoff-{feature}.md` |
-| All UX artifacts | UX Coherence Audit | `planning-artifacts/ux/ux-audit-{feature}-{date}.md` |
+| All UX artifacts | UX Coherence Audit (on-demand) | `planning-artifacts/ux/ux-audit-{feature}-{date}.md` |
 ```
 
 This formalizes Sprout's outputs in the BMAD pipeline standard. Teams using other profiles get the same artifact kinds at their profile's paths.

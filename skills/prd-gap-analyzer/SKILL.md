@@ -1,16 +1,14 @@
 ---
 name: prd-gap-analyzer
 description: >
-  Use when a designer wants to check whether a PRD is ready for design work
-  to begin. Produces a "design-readiness" verdict (ready / conditional /
-  blocked) and, when conditional or blocked, the specific clarifying
-  questions to route to PM. Profile-aware — outputs to the active profile's
-  declared location. Complementary to John's `bmad-validate-prd` (which
-  validates PRD completeness in general); this skill's lens is narrower:
-  "can design start?"
-  Triggers on: "analyze this PRD", "check the PRD for gaps", "is this PRD
-  ready for design?", "PRD gap check", "ready for design?", "review this
-  PRD before I start".
+  Mesh Mode screen spec generator. Reads a product outcome (the why) and a
+  product unit (the what — UAC, story doc, feature spec) and produces a
+  ux-screen-spec: actors, screen inventory, states, flow, and open design
+  decisions. This is the standalone Mesh Mode equivalent of the design
+  agent's inline Phase 0 Screen Spec Translation.
+  Triggers on: "analyze this PRD", "generate screen spec", "translate this
+  to screens", "what screens do I need", "run Phase 0", "screen spec from
+  this PRD", "ready for design?".
 ---
 
 ## Contract
@@ -20,19 +18,19 @@ reads:
   - kind: ux-design
     required: false
     preferred_when_present: true
-    note: "When Sally's UX spec already exists, it answers most design-readiness questions directly."
+    note: "When Sally's UX spec already exists, it answers most design questions directly."
   - kind: prd
     required: true
     fallback_for: ux-design
 writes:
-  - kind: ux-readiness
+  - kind: ux-screen-spec
 preconditions:
-  - "PRD parse succeeds (front-matter optional, body required)"
-  - "PRD contains at least a title or feature name AND a problem or objective statement"
+  - "At least one input document parse succeeds (product outcome or product unit)"
+  - "Input contains at least a feature name AND a problem or objective statement"
 postconditions:
   - "Output front-matter lists source artifacts in inputDocuments"
-  - "Output includes a design-readiness verdict: ready | conditional | blocked"
-  - "Output includes one entry per 'ready for DESIGN' check"
+  - "Output includes at least one actor and one screen"
+  - "Output includes a Mermaid flow diagram of screen transitions"
   - "If ledger is enabled in the active profile, workflow-state records this artifact"
 ```
 
@@ -40,9 +38,9 @@ postconditions:
 
 ## Overview
 
-Receive a PRD and answer one question: **can design work proceed?** If yes (ready), point the designer at next-recommended skills. If partial (conditional), list the explicit assumptions that will be carried forward so the designer can flag them at the first check-in. If blocked, emit the specific questions to route back to PM.
+Receive a product outcome (why) and product unit (what) and produce a **ux-screen-spec**: actors, screen inventory with states, screen-to-screen flow, and open design decisions. The screen spec is the direct input to the `prototype` skill.
 
-**This skill has a narrow lens.** It doesn't grade overall PRD quality. It checks whether the PRD gives enough material to run design skills (`user-journey`, `prototype`, `design-qa`) without compensating for missing intent. John's `bmad-validate-prd` (VP) already validates PRD completeness in general — this skill is the design-specific complement.
+**This skill is the Mesh Mode entry point for Phase 0.** When running the full workflow, the design agent runs Phase 0 inline. When operating in Mesh Mode — running individual skills directly — invoke this skill first to produce the screen spec, then pass it to `prototype`.
 
 ---
 
@@ -102,7 +100,7 @@ Each check produces one entry in the `checks` array of the output. Each entry ha
 
 **Severity default:** fail → moderate; partial → low.
 
-**Why it matters:** `user-journey` anchors pain points on FP-1/FP-2 markers. HMW statements target friction points. Without specific friction, design reduces to guesswork.
+**Why it matters:** Open design decisions anchor on concrete friction. HMW statements target these friction points. Without specific friction, design reduces to guesswork.
 
 ---
 
@@ -207,7 +205,7 @@ These become the caveats the designer flags at the Phase 1 check-in.
 
 ## Output Format
 
-Produce an artifact conforming to [`contracts/ux-readiness.schema.yaml`](../../contracts/ux-readiness.schema.yaml). Write it to the path declared by the active profile's `artifact_locations.ux_readiness`:
+Produce an artifact conforming to [`contracts/ux-screen-spec.schema.yaml`](../../contracts/ux-screen-spec.schema.yaml). Write it to the path declared by the active profile's `artifact_locations.ux_screen_spec`:
 
 ```yaml
 ---
@@ -270,14 +268,13 @@ For vanilla-profile outputs, use the minimal front-matter style: `title`, `date`
    - `source_prd` — path to the PRD
    - `source_prd_hash` — SHA-256 of the PRD content
    - `source_ux_design` / `source_ux_design_hash` — if Sally's spec was consumed
-   - Then `record` with `kind: ux-readiness`, `skill: prd-gap-analyzer`, `path`, `verdict`, `source_hashes`.
+   - Then `record` with `kind: ux-screen-spec`, `skill: prd-gap-analyzer`, `path`, `source_hashes`.
 
 2. **Report back to the user:**
    - The output artifact path.
    - The verdict and a one-line rationale.
-   - If `ready`: "Next recommended: run `user-journey` or `prd-ux-validator` for enrichment."
-   - If `conditional`: "N assumption(s) carried. N clarifying question(s) routed to PM. You can proceed with caveats or wait for answers."
-   - If `blocked`: "Design cannot proceed. N critical clarifying question(s) for PM. Route to John (or your PM agent) before re-running."
+   - Always: "Screen spec written. Next recommended: run `prototype`."
+   - Flag any open design decisions that require a designer call before prototyping.
 
 ---
 
@@ -307,8 +304,8 @@ For vanilla-profile outputs, use the minimal front-matter style: `title`, `date`
 
 ## Related
 
-- [`../../contracts/ux-readiness.schema.yaml`](../../contracts/ux-readiness.schema.yaml) — output schema.
+- [`../../contracts/ux-screen-spec.schema.yaml`](../../contracts/ux-screen-spec.schema.yaml) — output schema.
 - [`../../contracts/prd.schema.yaml`](../../contracts/prd.schema.yaml) — input schema (shape-tolerant).
 - [`../../contracts/ux-design.schema.yaml`](../../contracts/ux-design.schema.yaml) — Sally's UX spec (optional preferred input under BMAD profile).
 - [`../workflow-state/SKILL.md`](../workflow-state/SKILL.md) — ledger helper called post-production.
-- [`../prd-ux-validator/SKILL.md`](../prd-ux-validator/SKILL.md) — the likely next step when verdict is `conditional`.
+- [`../prototype/SKILL.md`](../prototype/SKILL.md) — the next step after screen spec is produced.

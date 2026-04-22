@@ -80,6 +80,8 @@ Use this mode when the user invokes a specific Sprout skill directly rather than
 
 2. **Check the workflow-state ledger** for the current feature if one exists and the profile enables the ledger. Summarize what's been produced and what's next-recommended. Offer to run the next-recommended skill.
 
+3. **Load the UX Learnings.** If the active profile declares `ux_learnings` (not null), read the file at that path if it exists. Hold all entries as passive context for the entire session — no user-facing message needed. When making design decisions during Phase 3 (Prototype), Phase 4 (QA), or any design advisory, check learnings for relevant entries and apply them silently. When you apply a learning, cite it inline: "Using LRN-004 (focus-visible ring on icon buttons)." If `ux_learnings` is null or the file doesn't exist yet, skip silently — no entries means no prior knowledge yet.
+
 **When the user invokes a single skill:**
 
 - Each Sprout skill has a `Contract:` block declaring its `reads`, `writes`, `preconditions`, and `postconditions`. Respect these — do NOT skip preconditions because the user seems to want speed.
@@ -95,114 +97,78 @@ Use this mode when the user invokes a specific Sprout skill directly rather than
 
 ---
 
-### Phase 0: Validate + Enrich
+### Phase 0: Screen Spec Translation
 
-Before any design work begins, validate the PRD and enrich it with secondary research.
+The design agent's entry point is two PM artifacts:
+- **Product Outcome** — the *why*: goals, success criteria, business intent. In BMAD, this is John's PRD or product brief. In vanilla, any PM doc describing purpose.
+- **Product Unit** — the *what*: the specific feature spec, UAC, or story doc describing what each actor sees, does, and receives.
 
-**Step 0.1 — Design-Readiness Check**
+If either is missing, use `AskUserQuestion` to ask for it before proceeding.
 
-Read `skills/prd-gap-analyzer/SKILL.md` and run it against the provided PRD. The skill writes an output conforming to `contracts/ux-readiness.schema.yaml` at the path declared by the active profile (BMAD: `_bmad-output/planning-artifacts/ux/ux-readiness-{feature}.md`; vanilla: `docs/design/readiness-{feature}.md`).
+**Step 0.1 — Extract actors and screens**
 
-Read the `verdict` field from the output.
+Read both documents. Identify:
+- **Actors** — who interacts with this feature and through what channel (e.g., PSI via web app, Client via shareable link)
+- **Screens** — one screen per distinct actor × context combination (e.g., PSI card view, Client sign-off view, success state, read-only post-confirm)
+- **States per screen** — each meaningful state the screen can be in (e.g., Pending, Signed Off, Warning)
+- **Screen flow** — how screens connect and what triggers each transition
+- **Open design decisions** — items explicitly left to the designer (look for "TBD by designer", "format TBD", "designer to decide") plus any gaps that require a design call; propose a default for each
 
-If `verdict: blocked`:
-- Use `AskUserQuestion`: "The PRD has a critical design-readiness gap — [the critical check that failed]. Secondary research can't fill this; it requires a product decision. Can you provide [specific clarifying question from the output]? Or should I proceed with this flagged as an explicit assumption?"
-- Wait for response before continuing.
+**Step 0.2 — Write the screen spec**
 
-If `verdict: conditional`:
-- Review the `assumptions_to_carry` list from the output.
-- Flag the highest-severity assumptions at the Phase 1 check-in so the designer can confirm/correct them before committing.
-- Continue to Step 0.2.
+Produce a `ux-screen-spec` artifact at the path declared by the active profile. Structure:
 
-If `verdict: ready`:
-- Continue to Step 0.2.
+1. **Actors** — name, role, access channel
+2. **Screen inventory** — table: Screen ID | Screen Name | Actor | States | Routes To
+3. **Flow** — Mermaid `flowchart TD` of screen-to-screen transitions. Critical path only.
+4. **Open design decisions** — numbered (OD-1, OD-2…), each with: question, affected screen(s), and proposed default
 
-**Step 0.2 — Context Enrichment**
+Call the `workflow-state` helper skill after writing (no-op on profiles without a ledger).
 
-Read `skills/prd-ux-validator/SKILL.md` and run it, passing:
-- The PRD
-- The gap report file path (as `gap-report` input)
-- `depth: standard` (default; ask the user once if they want `deep`)
-- `geography`: from PRD context if available, else ask once via `AskUserQuestion`
+**Step 0.3 — Check-in**
 
-Save the enriched brief to `skills/secondary-research/outputs/`.
+Show the screen inventory and open design decisions. Then use `AskUserQuestion`:
+> "This is the screen map I'll build from. Any screens missing, states wrong, or design decisions to resolve before I start?"
 
-**Step 0.3 — Brief Summary Check-in**
+Apply corrections, then proceed. For UAC-level inputs or tight feature specs, jump directly to Phase 3 — Phase 1 and Phase 2 are optional. For complex products or ambiguous problem spaces, run Phase 1 and Phase 2 first.
 
-Show the user a condensed view:
-- Feature + confirmed PRD content (3–5 bullets)
-- What research filled (2–3 bullets, marked `[assumed — gap-filled]`)
-- `Gap-fill confidence` level from §15 of the enriched brief
-- Any `[⚠️ RESEARCH CONFLICT]` markers requiring PM resolution before design proceeds
-
-Then use `AskUserQuestion`:
-> "This is the design context I'll work from. Any corrections before I move to Design Framing? Flag any [assumed] items that are wrong."
-
-**Step 0.4 — Adaptive Clarifying Questions (when gaps remain)**
-
-After enrichment, check whether assumptions remain that a user answer could resolve:
-- `Gap-fill confidence` is `medium` or `low`, **or**
-- Any `[assumed — gap-filled]` items appear in the §15 PROTOTYPE AGENT INPUT block
-
-If yes, read the Clarifying Questions from Phase 3 of the gap report. For each unanswered critical (🔴) or moderate (🟡) question, ask it via `AskUserQuestion` — **one question at a time**. Do not batch them.
-
-**Framing guide:**
-- State what you assumed and why: "I assumed [X] based on [research / industry convention]. Is that right?"
-- Make clear why the answer matters: "This affects [screen / flow / edge case]."
-- Offer a default so the user can confirm quickly: "If you're unsure, I'll proceed with [assumption] and flag it."
-
-After each answer:
-- If the user confirms the assumption → remove the `[assumed — gap-filled]` marker from that item and treat it as confirmed context
-- If the user corrects it → update the field inline and continue
-- If the user says "I don't know / proceed anyway" → keep the marker, note it in Phase 1 outputs
-
-Stop asking when either: all 🔴 questions are resolved, or the user says "proceed" / "skip" / "just go". Do not ask 🟢 (low-severity) questions unless the user requests it.
-
-Only proceed to Phase 1 once Step 0.4 is complete (or skipped by the user).
-
-**What Phase 0 replaces:**
-- UX Market Research — already done by prd-ux-validator
-- 4-question brief collection — PRD is the brief
-
-Carry these fields from the PROTOTYPE AGENT INPUT block (§15 of the enriched brief) into all subsequent phases:
-- `User` → Phase 1 JTBD anchor + Phase 2 User Journey persona
-- `Core need` → Phase 1 JTBD + HMW framing
-- `Primary friction` (FP-1, FP-2) → Phase 1 HMW targets + Phase 2 pain points → Phase 3 screen selection
-- `Decision trigger` → Phase 2 user flow entry point
-- `Success state` → Phase 1 success criteria
-- `Key constraints` → Phase 2 stack discovery + Phase 4 Prototype pre-flight
-- `Screen map` → Phase 3 Wireframing screen list seed
-- `Gap-fill confidence` → caveat level for Phase 1 check-in
+Carry these fields into all subsequent phases:
+- `actors` → Phase 1 JTBD anchors + Phase 2 journey personas
+- `screens` + `states` → Phase 1 HMW targets + Phase 3 screen list
+- `flow` → Phase 2 user flow diagram + Phase 3 routing
+- `open_design_decisions` → Phase 1 success criteria caveats + Phase 4 QA flags
 
 ---
 
-### Phase 1: Design Framing
+### Phase 1: Design Framing (optional)
 
-Translate the enriched brief into design language. This phase does not rediscover the problem — it commits to a design-ready interpretation of it.
+Translate the screen spec into design language. This phase does not rediscover the problem — it commits to a design-ready interpretation of it.
 
-**Inputs:** PROTOTYPE AGENT INPUT block from Phase 0 enriched brief.
+> Skip to Phase 3 for UAC-level inputs or tight feature specs where the screen spec already provides sufficient context for prototyping. Run this phase when design framing adds genuine value — complex products, ambiguous problem spaces, or when the team needs explicit JTBD/HMW alignment before committing to screens.
+
+**Inputs:** ux-screen-spec + product outcome from Phase 0.
 
 Produce:
 
-- **JTBD statements** (2–3): "When [situation from FP-n], I want to [motivation from Core need], so I can [outcome from Success state]"
-- **HMW statements** (3–5): Target the friction points (FP-1, FP-2) from the enriched brief. Each HMW should be actionable enough to generate a wireframe screen
-- **Problem statement**: One sentence — who is affected, what the friction is, why it matters. Confirm or refine from the PRD; do not rewrite unless research revealed a conflict
-- **Success criteria** (3–5): Reframe the PRD's success criteria as UX outcome statements. Replace delivery metrics ("we will build X") with observable user behaviors ("the employee can X without Y")
+- **JTBD statements** (2–3): "When [actor situation from screens/states], I want to [action the screen enables], so I can [outcome from product outcome goals]"
+- **HMW statements** (3–5): One per key screen or state transition from the screen spec. Each HMW should be specific enough to map to a screen
+- **Problem statement**: One sentence — which actor, what friction, why it matters. Derive from product outcome.
+- **Success criteria** (3–5): Reframe the product outcome's goals as observable user behaviors ("the PSI can X without Y")
 
-Each output should explicitly reference where it came from — PRD section, FP-n, or `[assumed — gap-filled]` item. If `Gap-fill confidence` is `low`, flag the assumptions explicitly.
+Each output should explicitly reference which screen, actor, or product outcome goal it maps to. Flag any open design decisions that affect framing.
 
 **Check-in**: State the problem statement and the top 2 HMW statements. Then use `AskUserQuestion`:
 > "This is the design framing I'll be working from. Does this match your intent? Any HMW statements to adjust before I map the journey?"
 
 ---
 
-### Phase 2: User Journey
+### Phase 2: User Journey (optional)
 
 Map the end-to-end journey for the primary use case from Phase 1.
 
 **Journey map table** — columns: Stage | User Actions | Thoughts | Emotions | Pain Points | Opportunities
 
-Use FP-1 and FP-2 from the enriched brief as the Pain Points column anchors. Use `Decision trigger` from the brief as the journey entry point.
+Use state transitions and open design decisions from the ux-screen-spec as the Pain Points column anchors. Use the entry screen from the ux-screen-spec flow as the journey entry point.
 
 **User flow diagram** — Mermaid `flowchart TD`. Keep it to the critical path (8–12 nodes).
 Use decision diamonds where the user has a meaningful choice. Label edges with what triggers
@@ -229,15 +195,29 @@ the transition. Add a Drop-off terminal node for any path where the user abandon
 
 Store all 5 vars and carry them forward explicitly into Phase 4.
 
+6. **Prototype Reference Scan** — after confirming `STACK_ENTRY_POINT`, check whether the prototype target already has screens:
+
+   - Read the active profile's `prototype.code_target` to get the path (BMAD: `../implem-prototype/`; vanilla: `prototype/`).
+   - If the directory exists and contains `.vue` / `.jsx` / `.tsx` files:
+     - Read 2–3 existing screen components. Extract: layout structure (grid/flex patterns), which design-system components are imported, color token usage, spacing and typography conventions.
+     - Summarize as `PROTOTYPE_REFERENCE` — a compact style snapshot Phase 3 uses as the layout baseline for new screens.
+     - Store `PROTOTYPE_REFERENCE_FOUND = yes`.
+   - If the directory is empty or absent: store `PROTOTYPE_REFERENCE_FOUND = no`.
+
+   Carry `PROTOTYPE_REFERENCE` and `PROTOTYPE_REFERENCE_FOUND` into Phase 3.
+
 ---
 
 ### Phase 3: Prototype
 
-**Before starting**, use `AskUserQuestion`:
-> "Do you have a wireframe, layout reference, or screen description you'd like me to base the prototype on? Share an image, file path, or description — or say 'decide for me' and I'll go with a reasonable default from the user flow."
+**Before starting**, check `PROTOTYPE_REFERENCE_FOUND`:
 
-- If the user provides a wireframe or layout → use it as the layout reference for all screens
-- If the user says "decide" / "up to you" / no input → proceed with a default layout derived from the user flow and journey map
+- If `yes`: State which existing screens were scanned and which patterns were extracted. Proceed directly — use `PROTOTYPE_REFERENCE` as the layout baseline for all new screens. Do not ask for a wireframe unless the user volunteers one.
+- If `no`: use `AskUserQuestion`:
+  > "Do you have a wireframe, layout reference, or screen description you'd like me to base the prototype on? Share an image, file path, or description — or say 'decide for me' and I'll go with a reasonable default from the user flow."
+
+  - If the user provides a wireframe or layout → use it as the layout reference for all screens
+  - If the user says "decide" / "up to you" / no input → proceed with a default layout derived from the user flow and journey map
 
 **Phase 3 entry hardening (run before Step 1 of prototype skill):**
 1. **Delete tab navigation** — if any tabbed multi-screen layout exists from prior work, remove the tab switcher entirely before building. Phase 3 is a single unified experience with real `vue-router` routing.
@@ -253,7 +233,8 @@ Read `skills/prototype/SKILL.md` and follow it exactly.
 Only proceed after the user confirms. Document applied fixes at the top of the first generated file.
 
 **Inputs carried forward:**
-- Layout reference from user (or default from user flow) — to guide screen structure
+- `PROTOTYPE_REFERENCE` (when `PROTOTYPE_REFERENCE_FOUND = yes`) — existing screen patterns as layout baseline
+- Layout reference from user (or default from user flow) — to guide screen structure when no reference exists
 - User flow diagram (Phase 2) — to map screen-to-screen navigation
 - `DESIGN_SYSTEM` — to pick the correct component library and token set
 - `STACK_FRAMEWORK` — to confirm the component model (Vue 3, React, etc.)
@@ -294,6 +275,8 @@ Fix selected issues in the same session. After fixing, list what was changed gro
 > "Note: [issue] is a Critical finding and has been deferred. Recommend resolving before production handoff."
 
 **Standalone use:** The user can invoke design-qa at any time — not just post-prototype. Trigger phrases: "review this design", "design qa", "audit the UI", "is this ready for handoff".
+
+**Extract learnings.** After QA fixes are applied, call `skills/learnings/SKILL.md` with the completed QA report. The skill will extract `qa-recurring` and `anti-pattern` entries from Critical and Major findings and append or reinforce them in the learnings file. Report what was captured (e.g., "Added LRN-009. Reinforced LRN-004."). No user action needed — this happens automatically.
 
 **Check-in**: After QA fixes are applied, use `AskUserQuestion`:
 > "Design QA complete. Typography and surfaces are already applied. Want to add animations and micro-interactions (Phase 5), or is this ready for handoff?"
@@ -339,6 +322,7 @@ Read `skills/handoff/SKILL.md` and follow it exactly.
 This phase makes no behavior changes — it only cleans and restructures the prototype so a frontend developer can build from it without untangling prototype shortcuts.
 
 **What it covers:**
+- **Product unit coverage check** — traces every actor, functional requirement, and state from the source product unit against the prototype. Flags gaps (❌) as blockers before code cleanup begins.
 - Split oversized components (anything doing more than one thing)
 - Extract inline mock data and state logic into composables
 - Type all `defineProps` and `defineEmits`
@@ -349,6 +333,8 @@ This phase makes no behavior changes — it only cleans and restructures the pro
 **Check-in**: After the pass, list files changed and what was done. Flag any design issues that should go back to the designer. Then use `AskUserQuestion`:
 > "Handoff pass complete. Here's what was refactored: [list]. Ready for the dev team."
 
+**Extract learnings.** After the handoff check-in, call `skills/learnings/SKILL.md` with the handoff output. The skill extracts `pattern` and `convention` entries from component splits, composable extractions, and structural decisions. Report what was captured. No user action needed.
+
 ---
 
 ## Handling Edge Cases
@@ -358,7 +344,7 @@ This phase makes no behavior changes — it only cleans and restructures the pro
 - **Research conflicts with PRD**: Surface each `[⚠️ RESEARCH CONFLICT]` at Phase 0.3 check-in. Let the user decide whether to align with PRD or research before Phase 1.
 - **User skips a phase**: Use `AskUserQuestion` to confirm they want to skip, then flag any assumptions you're carrying forward.
 - **User already has a phase artifact**: If the user says "I already have a journey map" or "skip to wireframes", use `AskUserQuestion` to ask them to share it so you can carry it forward explicitly.
-- **Gap-fill confidence is low**: At Phase 1 check-in, name the unverified assumptions explicitly and ask the user to confirm or correct them before committing to screens.
+- **Open design decisions unresolved**: At Phase 1 check-in, name the unresolved OD items from the screen spec explicitly and ask the user to confirm defaults or correct them before committing to screens.
 
 ---
 

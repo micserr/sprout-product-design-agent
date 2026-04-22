@@ -16,15 +16,13 @@ description: >
   at invocation (or inferred from the source PRD's filename, when one exists).
 
 artifact_locations:
-  ux_readiness:        "docs/design/readiness-{feature}.md"
-  ux_brief:            "docs/design/brief-{feature}.md"
-  ux_journey:          "docs/design/journey-{feature}.md"
+  ux_screen_spec:      "docs/design/screen-spec-{feature}.md"
   prototype_manifest:  "prototype/manifest.md"
   ux_qa:               "docs/design/qa-{feature}-{date}.md"
-  ux_animations:       "docs/design/animations-{feature}.md"
-  ux_feedback:         "docs/design/feedback-{feature}-{date}.md"
+  ui_feedback:         "docs/design/ui-feedback-{feature}-{date}.md"
   ux_handoff:          "docs/design/handoff-{feature}.md"
   ux_audit:            "docs/design/audit-{feature}-{date}.md"
+  ux_learnings:        "docs/design/ux-learnings.md"           # team-wide; no {feature} — shared across all features
   workflow_state:      null    # ledger disabled — skills skip ledger maintenance
 
 input_sources:

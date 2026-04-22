@@ -16,15 +16,13 @@ Contracts formalize this. Every skill's `SKILL.md` declares the kinds of input i
 
 | Kind | Schema | Produced by | Consumed by |
 |---|---|---|---|
-| `prd` | [`prd.schema.yaml`](prd.schema.yaml) | PM agent (John in BMAD; any PM elsewhere) | `prd-gap-analyzer`, `prd-ux-validator`, `user-journey`, fallback for many skills |
-| `ux-design` | [`ux-design.schema.yaml`](ux-design.schema.yaml) | BMAD's Sally (`bmad-create-ux-design`) — optional input for Sprout skills | `user-journey`, `prototype`, `design-qa`, `handoff` |
-| `ux-readiness` | [`ux-readiness.schema.yaml`](ux-readiness.schema.yaml) | `prd-gap-analyzer` | `prd-ux-validator`, human review before proceeding |
-| `ux-brief` | [`ux-brief.schema.yaml`](ux-brief.schema.yaml) | `prd-ux-validator` | `user-journey`, `prototype`, `design-qa` |
-| `ux-journey` | [`ux-journey.schema.yaml`](ux-journey.schema.yaml) | `user-journey` | `prototype`, `design-audit` |
+| `prd` | [`prd.schema.yaml`](prd.schema.yaml) | PM agent (John in BMAD; any PM elsewhere) | design agent Phase 0, fallback for many skills |
+| `ux-design` | [`ux-design.schema.yaml`](ux-design.schema.yaml) | BMAD's Sally (`bmad-create-ux-design`) — optional input for Sprout skills | design agent Phase 0, `prototype`, `design-qa`, `handoff` |
+| `ux-screen-spec` | [`ux-screen-spec.schema.yaml`](ux-screen-spec.schema.yaml) | design agent Phase 0 — translates product outcome + product unit into screens, states, flow, and open design decisions | `prototype`, `design-qa`, `handoff` |
+| `ux-journey` | [`ux-journey.schema.yaml`](ux-journey.schema.yaml) | `user-journey` (optional) | `prototype`, `design-audit` |
 | `prototype-manifest` | [`prototype-manifest.schema.yaml`](prototype-manifest.schema.yaml) | `prototype` | `design-qa`, `design-audit`, `handoff`, `design-feedback` |
 | `ux-qa` | [`ux-qa.schema.yaml`](ux-qa.schema.yaml) | `design-qa` | `handoff`, `design-audit` |
-| `ux-animations` | [`ux-animations.schema.yaml`](ux-animations.schema.yaml) | `animations` | `handoff`, `design-audit` |
-| `ux-feedback` | [`ux-feedback.schema.yaml`](ux-feedback.schema.yaml) | `design-feedback` | `design-audit` |
+| `ui-feedback` | [`ui-feedback.schema.yaml`](ui-feedback.schema.yaml) | design agent — on-demand, triggered when anyone submits UI feedback | prototype (applies changes), human review |
 | `ux-handoff` | [`ux-handoff.schema.yaml`](ux-handoff.schema.yaml) | `handoff` | downstream agents (architect, dev) |
 | `ux-audit` | [`ux-audit.schema.yaml`](ux-audit.schema.yaml) | `design-audit` (future) | human review |
 | `workflow-state` | [`workflow-state.schema.yaml`](workflow-state.schema.yaml) | `workflow-state` helper skill | every Sprout skill |

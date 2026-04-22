@@ -25,7 +25,7 @@ contract:
       required: false
       preferred_when_present: true
   writes:
-    - kind: ux-readiness
+    - kind: ux-screen-spec
 ```
 
 At invocation, Sprout:
@@ -64,8 +64,8 @@ Path template for each artifact kind the profile produces. Placeholders:
 Example (BMAD profile):
 ```yaml
 artifact_locations:
-  ux_readiness:  "_bmad-output/planning-artifacts/ux/ux-readiness-{feature}.md"
-  ux_qa:         "_bmad-output/planning-artifacts/ux/ux-qa-{feature}-{date}.md"
+  ux_screen_spec:  "_bmad-output/planning-artifacts/ux/ux-screen-spec-{feature}.md"
+  ux_qa:           "_bmad-output/planning-artifacts/ux/ux-qa-{feature}-{date}.md"
 ```
 
 ### `input_sources`
@@ -107,8 +107,8 @@ display_name: "Linear (ticket-per-design)"
 extends: vanilla
 
 artifact_locations:
-  ux_readiness:  "design-docs/{feature}/readiness.md"
-  ux_qa:         "design-docs/{feature}/qa-{date}.md"
+  ux_screen_spec:  "design-docs/{feature}/screen-spec.md"
+  ux_qa:           "design-docs/{feature}/qa-{date}.md"
   # everything else inherits from vanilla
 
 coexistence_agents:
@@ -134,8 +134,8 @@ When your SDLC is different enough that `extends` doesn't help, author a full pr
 
 ```yaml
 artifact_locations:
-  ux_readiness:  "design/{ticket}/readiness.md"
-  ux_journey:    "design/{ticket}/journey.md"
+  ux_screen_spec:  "design/{ticket}/screen-spec.md"
+  ux_qa:           "design/{ticket}/qa-{date}.md"
 
 naming:
   feature_source: ticket-id
@@ -145,7 +145,7 @@ naming:
 
 ```yaml
 artifact_locations:
-  ux_readiness:  "docs/design/epics/{epic}/{feature}/readiness.md"
+  ux_screen_spec:  "docs/design/epics/{epic}/{feature}/screen-spec.md"
 
 naming:
   feature_source: user-input    # ask for both epic and feature slugs at invocation
